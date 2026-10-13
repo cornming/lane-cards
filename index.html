@@ -1,0 +1,916 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>三路卡陣</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=Noto+Serif+TC:wght@700;900&display=swap">
+<style>
+/* Layout: one-screen game table. Status bar on top, battlefield flanked by the two heroes
+   (side by side on wide screens, stacked enemy-top / you-bottom on phones), waiting rack + detail below. */
+:root{
+  --bg:#12201c;          /* night card table, green felt */
+  --felt:#183028;
+  --surface:#1d2e29;
+  --surface2:#253a34;
+  --line:#36524b;
+  --fg:#ede7d7;          /* bone card stock */
+  --muted:#9fb3aa;
+  --ally:#5e9fe6;        /* cobalt banner */
+  --foe:#e2665b;         /* vermilion banner */
+  --gold:#e8bb52;        /* ready / elite */
+  --heal:#72cf90;
+  --font-display:"Noto Serif TC","Songti TC","PMingLiU",serif;
+  --font-num:"Chakra Petch","Segoe UI",system-ui,sans-serif;
+  --font-body:"PingFang TC","Microsoft JhengHei","Noto Sans TC",system-ui,sans-serif;
+  color-scheme:dark;
+}
+html,body{height:100%}
+body{background:var(--bg);color:var(--fg);font-family:var(--font-body);font-size:14px;line-height:1.5;
+  background-image:radial-gradient(ellipse at 50% 30%, var(--felt), var(--bg) 70%);}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,.card:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+#app{max-width:1180px;margin:0 auto;padding-inline:16px;padding-block:10px 24px;display:flex;flex-direction:column;gap:10px}
+
+/* status bar */
+.bar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px}
+.bar h1{font-family:var(--font-display);font-weight:900;font-size:22px;letter-spacing:.08em;margin:0;line-height:1.2}
+.ver{font-family:var(--font-num);font-size:11px;color:var(--muted);margin-left:-8px}
+.turn{font-family:var(--font-num);color:var(--muted);font-variant-numeric:tabular-nums}
+.turn b{color:var(--fg);font-size:16px}
+.phase{padding:2px 10px;border-radius:999px;font-size:13px;border:1px solid var(--line)}
+.phase.p{border-color:var(--ally);color:var(--ally)}
+.phase.e{border-color:var(--foe);color:var(--foe)}
+.tools{margin-left:auto;display:flex;gap:6px;flex-wrap:wrap}
+.btn{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:5px 10px;font-size:13px}
+.btn:hover{border-color:var(--muted)}
+
+/* field */
+#field{display:flex;flex-direction:row;align-items:center;justify-content:center;gap:12px}
+#field.v{flex-direction:column;gap:6px}
+#heroP{order:-1}
+#heroE{order:1}
+#field.v #heroE{order:-1}
+#field.v #heroP{order:1}
+.hero{width:132px;flex:none;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px;display:flex;flex-direction:column;align-items:center;gap:6px;position:relative}
+.hero.ally{border-top:4px solid var(--ally)}
+.hero.foe{border-top:4px solid var(--foe)}
+#field.v .hero{width:100%;max-width:520px;flex-direction:row;padding:6px 10px;gap:10px;border-top-width:1px}
+#field.v .hero.ally{border-left:4px solid var(--ally)}
+#field.v .hero.foe{border-left:4px solid var(--foe)}
+.hero .face{font-size:34px;line-height:1}
+#field.v .hero .face{font-size:24px}
+.hero .who{font-size:12px;color:var(--muted);text-align:center}
+.hero .who b{display:block;color:var(--fg);font-size:14px}
+#field.v .hero .who{text-align:left}
+.hpbar{width:100%;height:8px;border-radius:4px;background:var(--bg);overflow:hidden}
+.hpbar i{display:block;height:100%;border-radius:4px;transition:width .3s}
+.hero.ally .hpbar i{background:var(--ally)}
+.hero.foe .hpbar i{background:var(--foe)}
+.hpnum{font-family:var(--font-num);font-weight:700;font-size:20px;font-variant-numeric:tabular-nums}
+.hpnum small{font-size:12px;color:var(--muted);font-weight:600}
+#field.v .hpwrap{flex:1;display:flex;align-items:center;gap:8px;min-width:0}
+.hpwrap{width:100%;display:flex;flex-direction:column;align-items:center;gap:2px}
+.hero .sub{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.hero.hit{animation:shake .35s}
+@keyframes shake{20%{transform:translateX(-5px)}40%{transform:translateX(5px)}60%{transform:translateX(-3px)}80%{transform:translateX(3px)}}
+
+/* board */
+#boardWrap{flex:1;display:flex;justify-content:center;min-width:0;width:100%}
+#board{position:relative;border-radius:10px;background:var(--felt);box-shadow:inset 0 0 0 1px var(--line);touch-action:manipulation}
+#cells,#unitsLayer,#fxLayer{position:absolute;inset:0}
+#unitsLayer,#fxLayer{pointer-events:none}
+.cell{position:absolute;border:1px solid rgba(237,231,215,.06)}
+.cell.zP{background:rgba(94,159,230,.08)}
+.cell.zE{background:rgba(226,102,91,.07)}
+.cell.mid{box-shadow:inset 0 0 0 0 transparent}
+.cell.ok{background:rgba(232,187,82,.18);outline:1.5px dashed var(--gold);outline-offset:-4px;cursor:pointer;animation:pulse 1.2s infinite}
+.cell.tgt{background:rgba(232,187,82,.28);cursor:pointer}
+.cell.area{background:rgba(240,138,75,.35)}
+.cell.areaH{background:rgba(114,207,144,.32)}
+@keyframes pulse{50%{outline-color:rgba(232,187,82,.35)}}
+.midline{position:absolute;background:rgba(237,231,215,.18)}
+
+.unit{position:absolute;border-radius:10px;background:var(--surface2);border:2px solid var(--line);
+  transition:left .22s ease,top .22s ease,opacity .3s;--t:48px}
+.unit.ally{border-color:var(--ally);box-shadow:0 2px 0 var(--ally)}
+.unit.foe{border-color:var(--foe);box-shadow:0 2px 0 var(--foe)}
+.unit.elite{outline:2px solid var(--gold);outline-offset:1px}
+.unit.dead{opacity:0}
+.unit.noanim{transition:none}
+.unit .in{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+.unit.lunge .in{animation:lunge .26s ease}
+@keyframes lunge{45%{transform:translate(var(--lx),var(--ly)) scale(1.08)}}
+.unit .ic{font-size:calc(var(--t)*.46);line-height:1}
+.unit .a,.unit .h{position:absolute;bottom:-6px;min-width:calc(var(--t)*.36);height:calc(var(--t)*.36);border-radius:999px;
+  font-family:var(--font-num);font-weight:700;font-size:calc(var(--t)*.24);display:flex;align-items:center;justify-content:center;padding:0 3px;font-variant-numeric:tabular-nums;
+  background:var(--bg);border:1px solid var(--line)}
+.unit .a{left:-6px;color:var(--gold)}
+.unit .h{right:-6px;color:var(--fg)}
+.unit .h.low{color:var(--foe)}
+.unit .st{position:absolute;top:-8px;right:-4px;font-size:calc(var(--t)*.24);line-height:1}
+.unit .fly{position:absolute;top:-8px;left:-4px;font-size:calc(var(--t)*.24);line-height:1}
+
+.float{position:absolute;transform:translate(-50%,-50%);font-family:var(--font-num);font-weight:700;font-size:16px;white-space:nowrap;
+  text-shadow:0 1px 2px #000,0 0 6px #000;animation:floatup .95s ease forwards;pointer-events:none;z-index:5}
+.float.dmg{color:#ff8b7a}
+.float.heal{color:var(--heal)}
+.float.tag{color:var(--gold);font-family:var(--font-body);font-size:13px}
+.float.ko{color:var(--fg);font-family:var(--font-body);font-size:13px}
+.float.buff{color:#9fd0ff;font-family:var(--font-body);font-size:13px}
+@keyframes floatup{0%{opacity:0;margin-top:6px}15%{opacity:1}100%{opacity:0;margin-top:-30px}}
+
+/* dock */
+.dock{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:10px;align-items:start}
+.rack{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px;min-width:0}
+.rackhead{display:flex;align-items:center;gap:10px;margin-bottom:8px;flex-wrap:wrap}
+.rackhead .lbl{font-family:var(--font-display);font-weight:700;letter-spacing:.1em}
+.rackhead .deck{color:var(--muted);font-size:12px;font-variant-numeric:tabular-nums}
+.end{margin-left:auto;background:var(--gold);color:#241a06;border:none;border-radius:8px;padding:8px 16px;font-weight:700}
+.end:disabled{background:var(--surface2);color:var(--muted);cursor:default}
+.hand{display:flex;gap:8px;overflow-x:auto;padding:6px 2px 8px}
+.card{flex:none;width:88px;height:120px;border-radius:10px;background:var(--surface2);border:1.5px solid var(--line);position:relative;
+  display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:16px 4px 6px;gap:2px;text-align:center;transition:transform .15s}
+.card .ic{font-size:28px;line-height:1.1}
+.card .nm{font-size:13px;font-weight:700;line-height:1.2}
+.card .ty{font-size:11px;color:var(--muted)}
+.card .sts{margin-top:auto;font-family:var(--font-num);font-size:12px;font-weight:600;display:flex;gap:8px;font-variant-numeric:tabular-nums}
+.card .sts .x{color:var(--gold)}
+.card .w{position:absolute;top:-7px;left:-7px;width:26px;height:26px;border-radius:50%;background:var(--bg);border:1.5px solid var(--line);
+  font-family:var(--font-num);font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:center}
+.card.skill{background:linear-gradient(180deg,#2c3346,var(--surface2))}
+.card.wait .ic,.card.wait .nm{opacity:.5}
+.card.ready{border-color:var(--gold);box-shadow:0 0 12px rgba(232,187,82,.28)}
+.card.ready .w{border-color:var(--gold);color:var(--gold)}
+.card.sel{transform:translateY(-6px);box-shadow:0 0 0 2px var(--gold),0 8px 18px rgba(0,0,0,.4)}
+.card.lock{opacity:.6}
+.empty{color:var(--muted);font-size:13px;padding:24px 4px}
+
+.side{display:flex;flex-direction:column;gap:10px;min-width:0}
+.info{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 12px;min-height:120px}
+.info h3{margin:0 0 4px;font-family:var(--font-display);font-size:17px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.chip{font-family:var(--font-body);font-size:11px;font-weight:600;padding:1px 7px;border-radius:999px;background:var(--bg);border:1px solid var(--line)}
+.info .stats{font-family:var(--font-num);font-variant-numeric:tabular-nums;display:flex;gap:10px;flex-wrap:wrap;color:var(--muted);font-size:13px;margin:2px 0 6px}
+.info .stats b{color:var(--fg)}
+.info ul{margin:0;padding-left:18px;font-size:13px}
+.info .hint{font-size:13px;color:var(--gold);margin-top:6px}
+.info .cast{margin-top:8px;background:var(--gold);color:#241a06;border:none;border-radius:8px;padding:6px 14px;font-weight:700}
+.log{list-style:none;margin:0;padding:8px 12px;background:var(--surface);border:1px solid var(--line);border-radius:12px;font-size:12px;color:var(--muted);max-height:116px;overflow:auto}
+.log li{padding:1px 0}
+.log li.P{color:#b9d6f6}
+.log li.E{color:#f3bdb7}
+.log li:first-child{color:var(--fg)}
+
+/* overlay */
+#overlay{position:fixed;inset:0;background:rgba(10,18,15,.86);display:flex;align-items:flex-start;justify-content:center;overflow:auto;z-index:20;padding:24px 16px}
+.panel{max-width:760px;width:100%;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:22px;margin:auto}
+.panel h2{font-family:var(--font-display);font-weight:900;font-size:clamp(28px,6vw,44px);letter-spacing:.12em;margin:0;text-wrap:balance}
+.panel .lead{color:var(--muted);margin:6px 0 16px;max-width:60ch}
+.classes{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px}
+.cls{text-align:left;background:var(--surface2);border:1.5px solid var(--line);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:4px}
+.cls:hover{border-color:var(--gold)}
+.cls .ic{font-size:28px}
+.cls b{font-family:var(--font-display);font-size:18px}
+.cls span{font-size:13px;color:var(--muted)}
+.cls .sig{font-size:12px;color:var(--fg);opacity:.85}
+.rules{font-size:14px;padding-left:20px;margin:10px 0 0}
+.rules li{margin:4px 0}
+.result{font-size:16px;margin:8px 0 16px}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+
+@media (max-width:820px){
+  .dock{grid-template-columns:minmax(0,1fr)}
+  .bar h1{font-size:19px}
+}
+@media (prefers-reduced-motion:reduce){
+  .unit,.card,.hpbar i{transition:none}
+  .cell.ok{animation:none}
+  .unit.lunge .in,.hero.hit{animation:none}
+}
+</style>
+</head>
+<body>
+
+<div id="app">
+  <header class="bar">
+    <h1>三路卡陣</h1><span class="ver" id="ver"></span>
+    <div class="turn">第 <b id="turnNo">1</b> 回合</div>
+    <div id="phase" class="phase p">你的回合</div>
+    <div class="tools">
+      <button class="btn" id="speedBtn" type="button">速度 1×</button>
+      <button class="btn" id="rulesBtn" type="button">規則</button>
+      <button class="btn" id="newBtn" type="button">重新開始</button>
+    </div>
+  </header>
+
+  <main id="field">
+    <section class="hero foe" id="heroE"></section>
+    <div id="boardWrap"><div id="board"><div id="cells"></div><div id="unitsLayer"></div><div id="fxLayer"></div></div></div>
+    <section class="hero ally" id="heroP"></section>
+  </main>
+
+  <section class="dock">
+    <div class="rack">
+      <div class="rackhead">
+        <span class="lbl">待機區</span>
+        <span class="deck" id="deckInfo"></span>
+        <button class="end" id="endBtn" type="button">結束回合</button>
+      </div>
+      <div class="hand" id="hand"></div>
+    </div>
+    <div class="side">
+      <div class="info" id="info"></div>
+      <ol class="log" id="log"></ol>
+    </div>
+  </section>
+</div>
+<div id="overlay"></div>
+
+<script>
+/* ================= 規則資料 ================= */
+const VERSION='0.1.0';
+const LANES=3, COLS=10, HERO_HP=40, HAND_MAX=6, START_HAND=3, SUDDEN=20;
+const TYPES={
+  melee:{n:'近戰',phys:1,fx:''},
+  ranged:{n:'射擊',phys:1,fx:''},
+  fire:{n:'火焰',fx:'命中附加燃燒：2 回合，每回合 2 傷害'},
+  ice:{n:'冰結',fx:'命中附加緩速：下次移動力 -1'},
+  thunder:{n:'雷擊',fx:'命中有 35% 機率暈眩一回合'},
+  holy:{n:'神聖',fx:'無視護甲與魔抗'},
+  dark:{n:'暗黑',fx:'命中附加中毒：3 回合，每回合 1 傷害'},
+  wall:{n:'牆',phys:1,fx:'不會移動也不會攻擊'},
+  magic:{n:'魔法',fx:''}
+};
+const CARDS={};
+function U(id,name,icon,wait,atk,hp,move,range,type,ab={},ex={}){
+  return {id,name,icon,kind:'unit',wait,atk,hp,move,range,type,ab,armor:ex.armor||0,ward:ex.ward||0,elite:!!ab.elite};
+}
+function K(id,cls,name,icon,wait,target,desc,ex={}){return {id,cls,name,icon,kind:'skill',wait,target,desc,...ex};}
+[
+  U('sword','見習劍士','⚔️',1,3,8,2,1,'melee'),
+  U('shield','盾衛','🛡️',2,2,14,1,1,'melee',{counter:1},{armor:2}),
+  U('archer','長弓手','🏹',2,3,6,1,3,'ranged'),
+  U('wolf','狼騎兵','🐺',3,4,10,3,1,'melee',{charge:2}),
+  U('pyro','火焰術士','🔥',3,3,7,1,3,'fire',{},{ward:1}),
+  U('frost','冰晶法師','❄️',3,3,8,1,3,'ice',{},{ward:1}),
+  U('storm','雷鳴巫','⚡',3,3,8,1,3,'thunder',{},{ward:1}),
+  U('paladin','聖騎士','🌟',4,4,14,2,1,'holy',{first:1},{armor:1}),
+  U('assassin','暗影刺客','🗡️',3,5,6,3,1,'dark',{first:1}),
+  U('wall','石牆','🧱',1,0,16,0,0,'wall',{},{armor:1}),
+  U('griffin','獅鷲騎士','🦅',4,4,10,3,1,'melee',{fly:1}),
+  U('treant','樹人守衛','🌳',3,2,16,1,1,'melee',{counter:3,guard:1}),
+  U('cannon','矮人砲手','💣',4,5,8,1,4,'ranged',{snipe:1}),
+  U('medic','戰地醫者','🩹',2,1,8,1,2,'holy',{heal:2}),
+  U('horn','號角兵','📯',2,2,7,2,1,'melee',{haste:1}),
+  U('salamander','火蜥蜴','🦎',2,2,7,2,1,'fire',{strike:1}),
+  U('dragon','龍騎將','🐉',6,6,22,2,2,'fire',{fly:1,elite:1},{armor:1,ward:1}),
+  U('bishop','大主教','☀️',6,3,18,1,3,'holy',{heal:3,elite:1},{ward:2}),
+  K('warcry','warrior','戰吼','📣',3,'none','我方場上所有單位攻擊 +2'),
+  K('cleave','warrior','重斬','🪓',2,'enemy','對一個敵方單位造成 6 點物理傷害',{dmg:6,dtype:'melee'}),
+  K('bulwark','warrior','鐵壁','🏰',2,'ally','一個我方單位護甲 +2、生命 +6'),
+  K('heartshot','hunter','穿心箭','🎯',3,'none','直接對敵方英雄造成 6 點傷害'),
+  K('trap','hunter','捕獸夾','🪤',2,'enemy','對一個敵方單位造成 3 點傷害並暈眩一回合',{dmg:3,dtype:'ranged'}),
+  K('scout','hunter','偵查','🔭',1,'none','立刻抽 2 張牌'),
+  K('fireball','mage','火球術','☄️',3,'area','2×2 範圍內的敵方單位受到 4 點火焰傷害並燃燒',{area:'sq2',dmg:4,dtype:'fire'}),
+  K('nova','mage','冰霜新星','🧊',3,'area','三條路同一格位的敵方單位受到 3 點冰結傷害並緩速',{area:'rank',dmg:3,dtype:'ice'}),
+  K('missile','mage','奧術飛彈','✨',1,'enemy','對一個敵方單位造成 3 點魔法傷害',{dmg:3,dtype:'magic'}),
+  K('mend','priest','治癒之光','💚',2,'area','3×3 範圍內的我方單位回復 6 生命',{area:'sq3',heal:6}),
+  K('judgement','priest','聖光審判','🔆',2,'enemy','對一個敵方單位造成 5 點神聖傷害，無視防禦',{dmg:5,dtype:'holy'}),
+  K('sanctuary','priest','庇護','🕊️',3,'none','我方英雄回復 8 生命，場上我方單位各回復 3 生命'),
+].forEach(c=>CARDS[c.id]=c);
+
+const CLASSES={
+  warrior:{name:'戰士',icon:'🪖',desc:'強化前線，正面推進。',sig:'戰吼・重斬・鐵壁',
+    deck:{sword:3,shield:2,wolf:2,archer:2,horn:2,paladin:1,griffin:1,wall:1,dragon:1,warcry:1,cleave:2,bulwark:2}},
+  hunter:{name:'獵人',icon:'🏹',desc:'遠程壓制，直接狙擊英雄。',sig:'穿心箭・捕獸夾・偵查',
+    deck:{sword:2,archer:3,cannon:2,wolf:2,assassin:2,wall:2,horn:1,griffin:1,heartshot:2,trap:2,scout:1}},
+  mage:{name:'術師',icon:'🔮',desc:'範圍法術配元素單位。',sig:'火球術・冰霜新星・奧術飛彈',
+    deck:{sword:2,pyro:2,frost:2,storm:2,salamander:2,wall:2,treant:1,shield:1,dragon:1,fireball:2,nova:1,missile:2}},
+  priest:{name:'神官',icon:'📿',desc:'治療續戰，神聖傷害。',sig:'治癒之光・聖光審判・庇護',
+    deck:{sword:2,shield:2,medic:2,paladin:2,treant:2,archer:2,horn:1,wall:1,bishop:1,mend:2,judgement:2,sanctuary:1}},
+};
+
+function abilityLines(def){
+  const a=def.ab||{}, out=[];
+  if(a.elite) out.push('精銳：我方場上同時只能有一隻精銳');
+  if(a.first) out.push('先制：被射程內的敵人攻擊時先出手，擊殺就取消對方攻擊');
+  if(a.counter) out.push(`反擊 ${a.counter}：被攻擊後對攻擊者造成 ${a.counter} 點傷害`);
+  if(a.fly) out.push('飛行：越過地面單位前進，只攻擊飛行單位與英雄；地面近戰打不到它');
+  if(a.guard) out.push('警戒：也能攻擊四周相鄰的敵人（後方、鄰路）');
+  if(a.charge) out.push(`衝鋒 ${a.charge}：同回合移動 2 格以上後攻擊 +${a.charge}`);
+  if(a.snipe) out.push('狙擊：優先攻擊射程內生命最低的敵人');
+  if(a.heal) out.push(`治療 ${a.heal}：每回合回復相鄰友軍 ${a.heal} 生命`);
+  if(a.haste) out.push(`加速 ${a.haste}：每回合開始，待機最久的手牌再減 ${a.haste}`);
+  if(a.strike) out.push(`直擊 ${a.strike}：每回合直接對敵方英雄造成 ${a.strike} 點傷害`);
+  const fx=TYPES[def.type]?.fx; if(fx && def.type!=='melee' && def.type!=='ranged') out.push(`${TYPES[def.type].n}：${fx}`);
+  return out;
+}
+
+/* ================= 狀態與引擎 ================= */
+let S=null, busy=false, speed=1;
+const ui={render(){},float(){},lunge(){},heroHit(){},log(){},over(){},sleep:ms=>Promise.resolve()};
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+const dir=s=>s==='P'?1:-1;
+const foeOf=s=>s==='P'?'E':'P';
+const heroColFor=s=>s==='P'?COLS:-1;
+const who=s=>s==='P'?'你':'對手';
+const unitAt=(l,c)=>S.units.find(u=>u.lane===l&&u.col===c);
+const dist=(a,b)=>Math.abs(a.lane-b.lane)+Math.abs(a.col-b.col);
+const isFly=u=>!!CARDS[u.id].ab.fly;
+
+function newSide(cls){
+  const deck=[]; for(const [id,n] of Object.entries(CLASSES[cls].deck)) for(let i=0;i<n;i++) deck.push(id);
+  return {cls,hp:HERO_HP,maxHp:HERO_HP,deck:shuffle(deck),hand:[],discard:[]};
+}
+function newGame(pcls,ecls){
+  S={phase:'play',turn:1,active:'P',winner:null,sides:{P:newSide(pcls),E:newSide(ecls)},units:[],log:[],seq:1};
+  for(const s of ['P','E']) for(let i=0;i<START_HAND;i++) draw(s);
+}
+function log(msg,side){S.log.unshift({msg,side:side||''}); if(S.log.length>40) S.log.pop(); ui.log();}
+function draw(side){
+  const sd=S.sides[side];
+  if(sd.hand.length>=HAND_MAX) return false;
+  if(!sd.deck.length){ if(!sd.discard.length) return false; sd.deck=shuffle(sd.discard); sd.discard=[]; }
+  const id=sd.deck.pop(); sd.hand.push({uid:S.seq++,id,wait:CARDS[id].wait}); return true;
+}
+function removeFromHand(side,card){const h=S.sides[side].hand; const i=h.indexOf(card); if(i>=0) h.splice(i,1);}
+
+function canTarget(a,t){
+  const ad=CARDS[a.id];
+  if(ad.ab.fly && !isFly(t)) return false;
+  if(!ad.ab.fly && isFly(t) && a.range===1 && !ad.ab.guard) return false;
+  return true;
+}
+function findTarget(u){
+  const def=CARDS[u.id]; if(u.range<=0||u.atk<=0) return null;
+  const d=dir(u.side); let best=null,bestKey=Infinity;
+  for(const t of S.units){
+    if(t.side===u.side||!canTarget(u,t)) continue;
+    let k=null;
+    if(t.lane===u.lane){const s=(t.col-u.col)*d; if(s>=1&&s<=u.range) k=s;}
+    if(k===null&&def.ab.guard&&dist(t,u)===1) k=1;
+    if(k===null) continue;
+    const key=def.ab.snipe? t.hp*100+k : k*100+t.hp;
+    if(key<bestKey){bestKey=key;best={unit:t,d:k};}
+  }
+  if(best) return best;
+  const hs=(heroColFor(u.side)-u.col)*d;
+  if(hs>=1&&hs<=u.range) return {hero:foeOf(u.side),d:hs};
+  return null;
+}
+function stepTarget(u,mv){
+  const d=dir(u.side), fly=isFly(u);
+  for(let s=1;s<=mv;s++){
+    const c=u.col+d*s; if(c<0||c>=COLS) return 0;
+    const o=unitAt(u.lane,c);
+    if(!o) return s;
+    if(o.side===u.side) continue;          // 友軍可穿越
+    if(isFly(o)!==fly) continue;            // 不同高度互不阻擋
+    return 0;                               // 被敵人擋住
+  }
+  return 0;
+}
+function canSummonAt(side,def,lane,col){
+  if(lane<0||lane>=LANES||col<0||col>=COLS||unitAt(lane,col)) return false;
+  const reach=def.type==='wall'?5:3;
+  const k=side==='P'?col:COLS-1-col;
+  return k>=0&&k<reach;
+}
+function eliteBlocked(side,def){return def.elite && S.units.some(u=>u.side===side&&CARDS[u.id].elite);}
+function calcDmg(amt,dtype,t){
+  if(amt<=0) return 0;
+  if(dtype==='holy') return amt;
+  const red=TYPES[dtype]?.phys? t.armor : t.ward;
+  return Math.max(1,amt-red);
+}
+function kill(u){
+  S.units=S.units.filter(x=>x!==u);
+  S.sides[u.side].discard.push(u.id);
+  ui.float(u,'擊破','ko'); log(`${who(u.side)}的${CARDS[u.id].name}被擊破`,foeOf(u.side));
+}
+function hitUnit(t,amt,dtype){
+  const dmg=calcDmg(amt,dtype,t); t.hp-=dmg; ui.float(t,'-'+dmg,'dmg');
+  if(t.hp<=0){kill(t); return {killed:true,dmg};}
+  if(dtype==='fire') t.st.burn=2;
+  else if(dtype==='ice') t.st.slow=1;
+  else if(dtype==='thunder'&&Math.random()<0.35){t.st.stun=1; ui.float(t,'暈眩','tag',14);}
+  else if(dtype==='dark') t.st.poison=3;
+  return {killed:false,dmg};
+}
+function damageHero(side,amt){
+  if(S.phase!=='play') return;
+  const sd=S.sides[side]; sd.hp=Math.max(0,sd.hp-amt); ui.heroHit(side,amt);
+  if(sd.hp<=0) gameOver(foeOf(side));
+}
+function healUnit(u,n){const before=u.hp; u.hp=Math.min(u.maxHp,u.hp+n); const g=u.hp-before; if(g>0) ui.float(u,'+'+g,'heal'); return g;}
+function gameOver(winner){
+  if(S.phase!=='play') return;
+  S.phase='over'; S.winner=winner; log(winner==='P'?'你贏了這場對戰':'你的英雄倒下了',winner);
+  ui.render(); ui.over();
+}
+const sleep=ms=>ui.sleep(ms);
+
+async function strike(a,tgt,amt){
+  ui.lunge(a,tgt); await sleep(150);
+  if(tgt.hero){damageHero(tgt.hero,amt); return {killed:false};}
+  return hitUnit(tgt.unit,amt,CARDS[a.id].type);
+}
+async function attack(a,t,moved){
+  const ad=CARDS[a.id];
+  if(t.unit){
+    const tu=t.unit, td=CARDS[tu.id];
+    if(td.ab.first && tu.range>0 && tu.atk>0 && dist(tu,a)<=tu.range && canTarget(tu,a)){
+      ui.float(tu,'先制','tag',-14);
+      const r=await strike(tu,{unit:a},tu.atk);
+      if(r.killed) return {killed:false};
+    }
+  }
+  let amt=a.atk;
+  if(ad.ab.charge&&moved>=2){amt+=ad.ab.charge; ui.float(a,'衝鋒','tag',-14);}
+  const r=await strike(a,t,amt);
+  if(t.unit&&!r.killed&&S.phase==='play'&&a.hp>0){
+    const tu=t.unit, td=CARDS[tu.id];
+    if(td.ab.counter && dist(tu,a)<=Math.max(1,tu.range) && canTarget(tu,a)){
+      await sleep(110); ui.float(tu,'反擊','tag',-14); ui.lunge(tu,{unit:a});
+      hitUnit(a,td.ab.counter,'melee');
+    }
+  }
+  return r;
+}
+async function tick(u){
+  if(u.hp<=0||!S.units.includes(u)) return;
+  let dmg=0;
+  if(u.st.burn>0){u.st.burn--; dmg+=2;}
+  if(u.st.poison>0){u.st.poison--; dmg+=1;}
+  if(dmg){u.hp-=dmg; ui.float(u,'-'+dmg,'dmg',12); if(u.hp<=0) kill(u); ui.render(); await sleep(120);}
+}
+async function act(u){
+  if(u.hp<=0||!S.units.includes(u)||S.phase!=='play') return;
+  const def=CARDS[u.id], d=dir(u.side);
+  if(u.st.stun>0){u.st.stun--; ui.float(u,'暈眩中','tag'); await sleep(200); await tick(u); return;}
+  if(def.ab.heal){
+    let any=0; for(const o of S.units) if(o.side===u.side&&o!==u&&dist(o,u)===1) any+=healUnit(o,def.ab.heal);
+    if(any){ui.render(); await sleep(180);}
+  }
+  if(def.ab.strike){damageHero(foeOf(u.side),def.ab.strike); await sleep(180); if(S.phase!=='play') return;}
+  let mv=def.move; if(u.st.slow>0){mv=Math.max(0,mv-1); u.st.slow--;}
+  let moved=0, attacked=false;
+  while(S.phase==='play'){
+    if(!attacked){
+      const t=findTarget(u);
+      if(t){
+        attacked=true;
+        const r=await attack(u,t,moved); ui.render(); await sleep(170);
+        if(u.hp<=0||S.phase!=='play') return;
+        if(r.killed&&u.range===1&&mv>0) continue;
+        break;
+      }
+    }
+    if(mv<=0) break;
+    const s=stepTarget(u,mv); if(!s) break;
+    u.col+=d*s; mv-=s; moved+=s; ui.render(); await sleep(200);
+  }
+  await tick(u);
+}
+
+function summon(side,card,lane,col){
+  const def=CARDS[card.id];
+  const u={uid:S.seq++,id:def.id,side,lane,col,atk:def.atk,hp:def.hp,maxHp:def.hp,armor:def.armor,ward:def.ward,range:def.range,
+    st:{burn:0,poison:0,slow:0,stun:0}};
+  removeFromHand(side,card); S.units.push(u);
+  log(`${who(side)}召喚了${def.name}`,side);
+  return u;
+}
+function areaCells(k,lane,col){
+  const out=[];
+  if(k.area==='sq2'){const l0=Math.min(lane,LANES-2), c0=Math.min(col,COLS-2); for(let l=l0;l<l0+2;l++) for(let c=c0;c<c0+2;c++) out.push([l,c]);}
+  else if(k.area==='rank'){for(let l=0;l<LANES;l++) out.push([l,col]);}
+  else if(k.area==='sq3'){for(let l=lane-1;l<=lane+1;l++) for(let c=col-1;c<=col+1;c++) if(l>=0&&l<LANES&&c>=0&&c<COLS) out.push([l,c]);}
+  return out;
+}
+function skillTargetOk(side,k,lane,col){
+  const u=unitAt(lane,col);
+  if(k.target==='enemy') return !!u&&u.side!==side;
+  if(k.target==='ally') return !!u&&u.side===side;
+  if(k.target==='area') return lane>=0&&lane<LANES&&col>=0&&col<COLS;
+  return true;
+}
+async function castSkill(side,card,lane,col){
+  const k=CARDS[card.id], sd=S.sides[side], foe=foeOf(side);
+  removeFromHand(side,card); sd.discard.push(card.id);
+  log(`${who(side)}施放「${k.name}」`,side);
+  const own=S.units.filter(u=>u.side===side);
+  switch(k.id){
+    case 'warcry': own.forEach(u=>{if(u.atk>0){u.atk+=2; ui.float(u,'攻擊 +2','buff');}}); break;
+    case 'bulwark': {const t=unitAt(lane,col); t.armor+=2; t.maxHp+=6; t.hp+=6; ui.float(t,'護甲 +2','buff'); break;}
+    case 'heartshot': damageHero(foe,6); break;
+    case 'scout': draw(side); draw(side); break;
+    case 'sanctuary': {const h=sd; const g=Math.min(8,h.maxHp-h.hp); h.hp+=g; ui.heroHit(side,-g); own.forEach(u=>healUnit(u,3)); break;}
+    case 'mend': for(const [l,c] of areaCells(k,lane,col)){const u=unitAt(l,c); if(u&&u.side===side) healUnit(u,k.heal);} break;
+    case 'fireball': case 'nova':
+      for(const [l,c] of areaCells(k,lane,col)){const u=unitAt(l,c); if(u&&u.side!==side) hitUnit(u,k.dmg,k.dtype);} break;
+    default: {
+      const t=unitAt(lane,col);
+      if(t){const r=hitUnit(t,k.dmg,k.dtype); if(k.id==='trap'&&!r.killed){t.st.stun=1; ui.float(t,'暈眩','tag',14);}}
+    }
+  }
+  ui.render(); await sleep(320);
+}
+
+async function startTurn(side){
+  if(S.phase!=='play') return;
+  S.active=side; const sd=S.sides[side];
+  for(const c of sd.hand) c.wait=Math.max(0,c.wait-1);
+  for(const u of S.units){
+    const h=CARDS[u.id].ab.haste; if(u.side!==side||!h) continue;
+    const c=sd.hand.filter(x=>x.wait>0).sort((a,b)=>b.wait-a.wait)[0];
+    if(c){c.wait=Math.max(0,c.wait-h);}
+  }
+  draw(side);
+  if(S.turn>SUDDEN){ const n=S.turn-SUDDEN; log(`延長賽：${who(side)}的英雄受到 ${n} 點消耗傷害`,foeOf(side)); damageHero(side,n); if(S.phase!=='play') return; }
+  ui.render();
+  if(side==='E'){ await sleep(350); await aiTurn(); if(S.phase==='play') await endTurn('E'); }
+  else { busy=false; ui.render(); }
+}
+async function endTurn(side){
+  busy=true; ui.render();
+  const d=dir(side);
+  const order=S.units.filter(u=>u.side===side).sort((a,b)=>(b.col-a.col)*d||a.lane-b.lane);
+  for(const u of order){ if(S.phase!=='play') return; await act(u); }
+  if(S.phase!=='play') return;
+  if(side==='E') S.turn++;
+  await startTurn(foeOf(side));
+}
+
+/* ================= 電腦對手 ================= */
+function laneThreat(side,lane){
+  // 對 side 英雄的威脅：敵方單位越靠近 side 的英雄越危險
+  let t=0; for(const u of S.units) if(u.lane===lane&&u.side!==side){
+    const closeness = side==='E'? u.col/(COLS-1) : (COLS-1-u.col)/(COLS-1);
+    t+=(u.atk+1)*(0.5+closeness);
+  }
+  return t;
+}
+function lanePower(side,lane){let p=0; for(const u of S.units) if(u.lane===lane&&u.side===side) p+=u.hp/6+u.atk; return p;}
+function planUnit(side,card){
+  const def=CARDS[card.id]; if(eliteBlocked(side,def)) return null;
+  let best=null;
+  for(let l=0;l<LANES;l++){
+    const th=laneThreat(side,l), pw=lanePower(side,l);
+    let laneScore = def.type==='wall'? th*2 - pw : th*1.4 - pw*0.6;
+    if(def.ab.heal) laneScore = pw;
+    laneScore += Math.random()*1.5;
+    const reach=def.type==='wall'?5:3;
+    for(let k=0;k<reach;k++){
+      const col= side==='P'? k : COLS-1-k;
+      if(!canSummonAt(side,def,l,col)) continue;
+      let pos;
+      if(def.type==='wall') pos = k>=2? 2 : 0;
+      else if(def.range>=2) pos = -k;          // 遠程放後排
+      else pos = k;                            // 近戰放前排
+      const sc = 10 + def.wait*1.5 + laneScore + pos*0.4;
+      if(!best||sc>best.score) best={kind:'unit',card,lane:l,col,score:sc};
+    }
+  }
+  if(best && def.type==='wall' && laneThreat(side,best.lane)<1) best.score=1;
+  return best;
+}
+function dmgValue(side,k,lane,col){
+  let v=0;
+  const cells = k.target==='area'? areaCells(k,lane,col) : [[lane,col]];
+  for(const [l,c] of cells){
+    const u=unitAt(l,c); if(!u) continue;
+    if(k.heal){ if(u.side===side) v+=Math.min(k.heal,u.maxHp-u.hp); continue; }
+    if(u.side===side) continue;
+    const dmg=calcDmg(k.dmg,k.dtype,u);
+    v += dmg>=u.hp ? 8+u.atk*1.5+CARDS[u.id].wait : dmg+u.atk*0.5;
+    if(k.id==='trap') v+=3;
+  }
+  return v;
+}
+function planSkill(side,card){
+  const k=CARDS[card.id], sd=S.sides[side], own=S.units.filter(u=>u.side===side);
+  if(k.target==='none'){
+    let v=0;
+    if(k.id==='warcry') v = own.filter(u=>u.atk>0).length>=2 ? own.length*3 : 0;
+    if(k.id==='heartshot') v = 9;
+    if(k.id==='scout') v = sd.hand.length<=3 ? 7 : (sd.hand.length<=HAND_MAX-2 ? 3 : 0);
+    if(k.id==='sanctuary'){ v = Math.min(8,sd.maxHp-sd.hp) + own.reduce((s,u)=>s+Math.min(3,u.maxHp-u.hp),0); if(v<7) v=0; }
+    return v>0? {kind:'skill',card,lane:0,col:0,score:v} : null;
+  }
+  if(k.target==='ally'){
+    const t=own.filter(u=>u.atk>0).sort((a,b)=>(b.col-a.col)*dir(side)||b.atk-a.atk)[0];
+    return t? {kind:'skill',card,lane:t.lane,col:t.col,score:5} : null;
+  }
+  let best=null;
+  for(let l=0;l<LANES;l++) for(let c=0;c<COLS;c++){
+    if(!skillTargetOk(side,k,l,c)) continue;
+    const v=dmgValue(side,k,l,c);
+    if(!best||v>best.score) best={kind:'skill',card,lane:l,col:c,score:v};
+  }
+  const min = k.heal? 7 : 4;
+  return best&&best.score>=min? best : null;
+}
+async function aiTurn(side='E'){
+  const sd=S.sides[side];
+  for(let guard=0; guard<12 && S.phase==='play'; guard++){
+    let best=null;
+    for(const c of sd.hand.filter(c=>c.wait===0)){
+      const plan = CARDS[c.id].kind==='unit'? planUnit(side,c) : planSkill(side,c);
+      if(plan&&(!best||plan.score>best.score)) best=plan;
+    }
+    if(!best) break;
+    await sleep(380);
+    if(best.kind==='unit') summon(side,best.card,best.lane,best.col);
+    else await castSkill(side,best.card,best.lane,best.col);
+    ui.render();
+  }
+}
+
+/* ================= 畫面 ================= */
+if(typeof document!=='undefined'){
+const $=s=>document.querySelector(s);
+const board=$('#board'), cellsEl=$('#cells'), unitsEl=$('#unitsLayer'), fxEl=$('#fxLayer');
+let V=false, cw=60, ch=60, tok=50, tokW=50, sel=null, areaPick=null, inspect=null, stable=null;
+const els=new Map();
+
+ui.sleep=ms=>new Promise(r=>setTimeout(r,ms/speed));
+const xy=(l,c)=>V? {x:l*cw,y:(COLS-1-c)*ch} : {x:c*cw,y:l*ch};
+
+function layout(){
+  const field=$('#field'); const W0=field.clientWidth;
+  V = W0<780; field.classList.toggle('v',V);
+  const W=V?LANES:COLS, H=V?COLS:LANES;
+  let bw,bh;
+  if(V){ bw=Math.min(W0,520); bh=Math.round(Math.min(Math.max(window.innerHeight*0.62,440),720)); }
+  else { bw=Math.min(W0-2*132-24,880); bh=Math.round(bw*H/W); }
+  board.style.width=bw+'px'; board.style.height=bh+'px';
+  cw=bw/W; ch=bh/H; tok=Math.floor(Math.min(cw,ch)*0.84); tokW=Math.floor(Math.min(cw*0.84,tok*1.5));
+  cellsEl.innerHTML='';
+  for(let l=0;l<LANES;l++) for(let c=0;c<COLS;c++){
+    const d=document.createElement('div'); const p=xy(l,c);
+    d.className='cell'+(c<3?' zP':'')+(c>=COLS-3?' zE':'');
+    Object.assign(d.style,{left:p.x+'px',top:p.y+'px',width:cw+'px',height:ch+'px'});
+    d.dataset.l=l; d.dataset.c=c; cellsEl.appendChild(d);
+  }
+  const m=document.createElement('div'); m.className='midline';
+  if(V) Object.assign(m.style,{left:'4px',right:'4px',top:(5*ch-1)+'px',height:'2px'});
+  else Object.assign(m.style,{top:'4px',bottom:'4px',left:(5*cw-1)+'px',width:'2px'});
+  cellsEl.appendChild(m);
+  for(const el of els.values()) el.classList.add('noanim');
+  render();
+  requestAnimationFrame(()=>{for(const el of els.values()) el.classList.remove('noanim');});
+}
+
+function unitPos(u){const p=xy(u.lane,u.col); return {x:p.x+(cw-tokW)/2,y:p.y+(ch-tok)/2};}
+function renderUnits(){
+  const alive=new Set();
+  for(const u of S?S.units:[]){
+    alive.add(u.uid);
+    let el=els.get(u.uid);
+    const def=CARDS[u.id];
+    if(!el){
+      el=document.createElement('div'); el.className='unit noanim '+(u.side==='P'?'ally':'foe')+(def.elite?' elite':'');
+      el.innerHTML='<div class="in"><span class="ic"></span></div><span class="a"></span><span class="h"></span><span class="st"></span><span class="fly"></span>';
+      unitsEl.appendChild(el); els.set(u.uid,el);
+      requestAnimationFrame(()=>el.classList.remove('noanim'));
+    }
+    const p=unitPos(u);
+    Object.assign(el.style,{left:p.x+'px',top:p.y+'px',width:tokW+'px',height:tok+'px'});
+    el.style.setProperty('--t',tok+'px');
+    el.querySelector('.ic').textContent=def.icon;
+    el.querySelector('.a').textContent=u.atk;
+    const h=el.querySelector('.h'); h.textContent=u.hp; h.classList.toggle('low',u.hp<u.maxHp);
+    el.querySelector('.st').textContent=(u.st.burn?'🔥':'')+(u.st.poison?'☠️':'')+(u.st.slow?'❄️':'')+(u.st.stun?'💫':'');
+    el.querySelector('.fly').textContent=def.ab.fly?'🪽':'';
+  }
+  for(const [uid,el] of els) if(!alive.has(uid)){els.delete(uid); el.classList.add('dead'); setTimeout(()=>el.remove(),320);}
+}
+function heroHTML(side){
+  const sd=S.sides[side], cls=CLASSES[sd.cls], pct=Math.max(0,sd.hp/sd.maxHp*100);
+  const sub= side==='E'? `待機區 ${sd.hand.length} 張・牌庫 ${sd.deck.length}` : `牌庫 ${sd.deck.length}・棄牌 ${sd.discard.length}`;
+  return `<div class="face">${cls.icon}</div><div class="who"><b>${side==='P'?'你':'對手'}・${cls.name}</b>英雄</div>
+    <div class="hpwrap"><div class="hpnum">${sd.hp}<small> / ${sd.maxHp}</small></div><div class="hpbar"><i style="width:${pct}%"></i></div></div>
+    <div class="sub">${sub}</div>`;
+}
+function validCells(){
+  const set=new Set(); if(!sel||busy||S.active!=='P'||S.phase!=='play') return set;
+  const card=S.sides.P.hand.find(c=>c.uid===sel); if(!card) return set;
+  const def=CARDS[card.id];
+  for(let l=0;l<LANES;l++) for(let c=0;c<COLS;c++){
+    if(def.kind==='unit'){ if(!eliteBlocked('P',def)&&canSummonAt('P',def,l,c)) set.add(l+','+c); }
+    else if(def.target==='enemy'||def.target==='ally'||def.target==='area'){ if(skillTargetOk('P',def,l,c)) set.add(l+','+c); }
+  }
+  return set;
+}
+function renderCells(){
+  const ok=validCells(); const card=sel&&S.sides.P.hand.find(c=>c.uid===sel); const def=card&&CARDS[card.id];
+  const area=new Set();
+  if(def&&def.target==='area'&&areaPick) for(const [l,c] of areaCells(def,areaPick.l,areaPick.c)) area.add(l+','+c);
+  for(const d of cellsEl.querySelectorAll('.cell')){
+    const key=d.dataset.l+','+d.dataset.c;
+    const isArea=def&&def.target==='area';
+    d.classList.toggle('ok',ok.has(key)&&!isArea);
+    d.classList.toggle('tgt',ok.has(key)&&isArea&&!area.size);
+    d.classList.toggle('area',area.has(key)&&!def.heal);
+    d.classList.toggle('areaH',area.has(key)&&!!def.heal);
+  }
+}
+function cardHTML(c,isSel){
+  const def=CARDS[c.id], ready=c.wait===0;
+  const cls=['card',def.kind==='skill'?'skill':'',ready?'ready':'wait',isSel?'sel':'',(busy||S.active!=='P')?'lock':''].join(' ');
+  const stats= def.kind==='unit'? `<span class="x">攻${def.atk}</span><span>血${def.hp}</span>` : `<span>技能</span>`;
+  const ty= def.kind==='unit'? TYPES[def.type].n+(def.elite?'・精銳':'') : CLASSES[def.cls].name;
+  return `<button type="button" class="${cls}" data-uid="${c.uid}" aria-label="${def.name}，待機 ${c.wait}"><span class="w">${ready?'✓':c.wait}</span>
+    <span class="ic">${def.icon}</span><span class="nm">${def.name}</span><span class="ty">${ty}</span><span class="sts">${stats}</span></button>`;
+}
+function renderHand(){
+  const h=S.sides.P.hand;
+  $('#hand').innerHTML = h.length? h.map(c=>cardHTML(c,c.uid===sel)).join('') : '<div class="empty">待機區沒有牌。結束回合後會再抽一張。</div>';
+  $('#deckInfo').textContent=`${h.length} / ${HAND_MAX} 張・每回合抽 1 張，待機值歸零才能出牌`;
+}
+function defDetail(def,extra=''){
+  if(def.kind==='skill'){
+    return `<h3>${def.icon} ${def.name}<span class="chip">${CLASSES[def.cls].name}技能</span></h3>
+      <div class="stats"><span>待機 <b>${def.wait}</b></span></div><ul><li>${def.desc}</li></ul>${extra}`;
+  }
+  const ab=abilityLines(def);
+  return `<h3>${def.icon} ${def.name}<span class="chip">${TYPES[def.type].n}</span>${def.elite?'<span class="chip" style="color:var(--gold)">精銳</span>':''}</h3>
+    <div class="stats"><span>待機 <b>${def.wait}</b></span><span>攻 <b>${def.atk}</b></span><span>血 <b>${def.hp}</b></span><span>移動 <b>${def.move}</b></span><span>射程 <b>${def.range}</b></span>${def.armor?`<span>護甲 <b>${def.armor}</b></span>`:''}${def.ward?`<span>魔抗 <b>${def.ward}</b></span>`:''}</div>
+    ${ab.length?`<ul>${ab.map(x=>`<li>${x}</li>`).join('')}</ul>`:''}${extra}`;
+}
+function renderInfo(){
+  const box=$('#info');
+  if(sel){
+    const card=S.sides.P.hand.find(c=>c.uid===sel);
+    if(card){
+      const def=CARDS[card.id]; let hint='';
+      if(def.kind==='unit') hint = eliteBlocked('P',def)? '場上已經有我方精銳，這張要等它離場。' : `點選己方前 ${def.type==='wall'?5:3} 格內的空格召喚。`;
+      else if(def.target==='none') hint = `<button type="button" class="cast" id="castBtn">施放${def.name}</button>`;
+      else if(def.target==='area') hint = areaPick? `<button type="button" class="cast" id="castBtn">在這裡施放</button>　或點別格換位置` : '點選戰場上的一格，預覽範圍。';
+      else hint = def.target==='enemy'? '點選一個敵方單位。' : '點選一個我方單位。';
+      box.innerHTML=defDetail(def,`<div class="hint">${hint}</div>`); return;
+    }
+  }
+  if(inspect){
+    if(inspect.unit){
+      const u=S.units.find(x=>x.uid===inspect.unit);
+      if(u){
+        const def=CARDS[u.id];
+        const st=[u.st.burn&&`燃燒 ${u.st.burn}`,u.st.poison&&`中毒 ${u.st.poison}`,u.st.slow&&'緩速',u.st.stun&&'暈眩'].filter(Boolean).join('、');
+        box.innerHTML=`<h3>${def.icon} ${def.name}<span class="chip" style="color:${u.side==='P'?'var(--ally)':'var(--foe)'}">${u.side==='P'?'我方':'敵方'}</span><span class="chip">${TYPES[def.type].n}</span></h3>
+          <div class="stats"><span>攻 <b>${u.atk}</b></span><span>血 <b>${u.hp}/${u.maxHp}</b></span><span>移動 <b>${def.move}</b></span><span>射程 <b>${u.range}</b></span>${u.armor?`<span>護甲 <b>${u.armor}</b></span>`:''}${u.ward?`<span>魔抗 <b>${u.ward}</b></span>`:''}</div>
+          ${st?`<div class="hint">狀態：${st}</div>`:''}<ul>${abilityLines(def).map(x=>`<li>${x}</li>`).join('')||'<li>沒有特殊能力</li>'}</ul>`;
+        return;
+      }
+    }
+    if(inspect.card){ box.innerHTML=defDetail(CARDS[inspect.card.id],`<div class="hint">還要 ${inspect.card.wait} 回合才能出牌。</div>`); return; }
+  }
+  box.innerHTML = S.active==='P'&&!busy
+    ? `<h3>你的回合</h3><ul><li>亮金框的牌待機值已歸零，點它再點戰場出牌。</li><li>出完牌按「結束回合」，你的單位會自動前進、攻擊。</li><li>點戰場上的單位可以看它的能力。</li></ul>`
+    : `<h3>對手行動中</h3><ul><li>對手正在出牌，接著它的單位會自動前進、攻擊。</li></ul>`;
+}
+ui.log=()=>{ if(!S) return; $('#log').innerHTML=S.log.slice(0,12).map(e=>`<li class="${e.side}">${e.msg}</li>`).join(''); };
+function render(){
+  if(!S) return;
+  $('#turnNo').textContent=S.turn;
+  const ph=$('#phase');
+  if(S.phase==='over'){ph.className='phase'; ph.textContent=S.winner==='P'?'勝利':'敗北';}
+  else if(S.active==='P'&&!busy){ph.className='phase p'; ph.textContent='你的回合';}
+  else if(S.active==='P'){ph.className='phase p'; ph.textContent='我方單位行動中';}
+  else {ph.className='phase e'; ph.textContent='對手回合';}
+  $('#heroP').innerHTML=heroHTML('P'); $('#heroE').innerHTML=heroHTML('E');
+  $('#endBtn').disabled = busy||S.active!=='P'||S.phase!=='play';
+  renderUnits(); renderCells(); renderHand(); renderInfo(); ui.log();
+  const cb=$('#castBtn'); if(cb) cb.onclick=onCast;
+  if(!busy&&S.active==='P'&&S.phase==='play') stable=JSON.parse(JSON.stringify(S));
+}
+ui.render=render;
+
+function centerOfUnit(u){const p=xy(u.lane,u.col); return {x:p.x+cw/2,y:p.y+ch/2};}
+ui.float=(u,text,cls,dy=0)=>{
+  const c=centerOfUnit(u); const f=document.createElement('div');
+  f.className='float '+cls; f.textContent=text; f.style.left=c.x+'px'; f.style.top=(c.y+dy-tok*0.15)+'px';
+  fxEl.appendChild(f); setTimeout(()=>f.remove(),1000);
+};
+ui.lunge=(a,t)=>{
+  const el=els.get(a.uid); if(!el) return;
+  let dx,dy;
+  if(t.unit){const p=centerOfUnit(a), q=centerOfUnit(t.unit); const len=Math.hypot(q.x-p.x,q.y-p.y)||1; dx=(q.x-p.x)/len*tok*0.35; dy=(q.y-p.y)/len*tok*0.35;}
+  else { const f=dir(a.side)*tok*0.35; dx=V?0:f; dy=V?-f:0; }
+  el.style.setProperty('--lx',dx+'px'); el.style.setProperty('--ly',dy+'px');
+  el.classList.remove('lunge'); void el.offsetWidth; el.classList.add('lunge');
+  setTimeout(()=>el.classList.remove('lunge'),280);
+};
+ui.heroHit=(side,amt)=>{
+  const el=side==='P'?$('#heroP'):$('#heroE');
+  el.innerHTML=heroHTML(side);
+  if(amt>0){el.classList.remove('hit'); void el.offsetWidth; el.classList.add('hit');}
+  const f=document.createElement('div'); f.className='float '+(amt>0?'dmg':'heal'); f.textContent=(amt>0?'-':'+')+Math.abs(amt);
+  f.style.left='50%'; f.style.top='40%'; el.appendChild(f); setTimeout(()=>f.remove(),1000);
+};
+
+/* ---- 互動 ---- */
+$('#hand').addEventListener('click',e=>{
+  const b=e.target.closest('.card'); if(!b||!S||S.phase!=='play') return;
+  const card=S.sides.P.hand.find(c=>c.uid===+b.dataset.uid); if(!card) return;
+  areaPick=null;
+  if(card.wait>0||busy||S.active!=='P'){ sel=null; inspect={card}; render(); return; }
+  sel = sel===card.uid? null : card.uid; inspect=null; render();
+});
+cellsEl.addEventListener('click',async e=>{
+  const d=e.target.closest('.cell'); if(!d||!S) return;
+  const l=+d.dataset.l, c=+d.dataset.c;
+  const card=sel&&S.sides.P.hand.find(x=>x.uid===sel);
+  if(card&&!busy&&S.active==='P'&&S.phase==='play'){
+    const def=CARDS[card.id];
+    if(def.kind==='unit'&&!eliteBlocked('P',def)&&canSummonAt('P',def,l,c)){ summon('P',card,l,c); sel=null; render(); return; }
+    if(def.kind==='skill'&&def.target==='area'){ areaPick={l,c}; render(); return; }
+    if(def.kind==='skill'&&(def.target==='enemy'||def.target==='ally')&&skillTargetOk('P',def,l,c)){
+      sel=null; busy=true; render(); await castSkill('P',card,l,c); busy=false; render(); return;
+    }
+  }
+  const u=unitAt(l,c);
+  if(u){ inspect={unit:u.uid}; if(!card) sel=null; render(); }
+});
+async function onCast(){
+  const card=sel&&S.sides.P.hand.find(x=>x.uid===sel); if(!card||busy) return;
+  const def=CARDS[card.id];
+  if(def.target==='area'&&!areaPick) return;
+  const l=areaPick?areaPick.l:0, c=areaPick?areaPick.c:0;
+  sel=null; areaPick=null; busy=true; render();
+  await castSkill('P',card,l,c); busy=false; render();
+}
+$('#endBtn').addEventListener('click',()=>{
+  if(busy||!S||S.active!=='P'||S.phase!=='play') return;
+  sel=null; areaPick=null; inspect=null; log('你結束了回合','P'); endTurn('P');
+});
+$('#speedBtn').addEventListener('click',()=>{speed=speed===1?2:speed===2?4:1; $('#speedBtn').textContent=`速度 ${speed}×`; try{localStorage.setItem('lc-speed',speed)}catch(e){}});
+try{const s=+localStorage.getItem('lc-speed'); if([1,2,4].includes(s)){speed=s; $('#speedBtn').textContent=`速度 ${speed}×`;}}catch(e){}
+
+/* ---- 開場、規則、結算 ---- */
+$('#ver').textContent='v'+VERSION;
+const ov=$('#overlay');
+const RULES=`<ol class="rules">
+  <li>戰場有三條路，每條 10 格。你的英雄在${'<b>左側／下方</b>'}，對手在另一端。把對手英雄的 ${HERO_HP} 點生命打到 0 就獲勝。</li>
+  <li>每張牌都有<b>待機值</b>。你的回合開始時，待機區所有牌的待機值減 1，再抽 1 張牌（待機區最多 ${HAND_MAX} 張）。待機值歸零的牌才能出。</li>
+  <li>單位只能召喚在自己這側的前 3 格（石牆可到 5 格）。一回合出幾張都可以。</li>
+  <li>按下「結束回合」後，你的單位從最前面的開始依序自動行動：射程內有敵人就攻擊，沒有就往前走。走到底就直接攻擊英雄。</li>
+  <li>友軍可以互相穿越，敵軍會擋路。飛行單位越過地面單位，地面近戰打不到它。</li>
+  <li>物理傷害被護甲減免，魔法傷害被魔抗減免，神聖無視兩者。火焰燃燒、冰結緩速、雷擊暈眩、暗黑中毒。</li>
+  <li>技能牌是職業專屬，同樣有待機值，可以指定單位、範圍或直接生效。</li>
+  <li>第 ${SUDDEN} 回合後進入延長賽：每回合開始，該方英雄受到逐回合增加的消耗傷害。</li>
+</ol>`;
+function showMenu(){
+  ov.hidden=false;
+  ov.innerHTML=`<div class="panel"><h2>三路卡陣</h2>
+    <p class="lead">排好待機區、算準出牌時機，讓自動前進的部隊替你衝破三條戰線。選一個職業開戰，對手職業隨機。</p>
+    <div class="classes">${Object.entries(CLASSES).map(([k,c])=>`<button type="button" class="cls" data-cls="${k}"><span class="ic">${c.icon}</span><b>${c.name}</b><span>${c.desc}</span><span class="sig">技能：${c.sig}</span></button>`).join('')}</div>
+    <details style="margin-top:14px"><summary>怎麼玩</summary>${RULES}</details></div>`;
+  ov.querySelectorAll('.cls').forEach(b=>b.onclick=()=>startGame(b.dataset.cls));
+}
+function startGame(pcls){
+  const others=Object.keys(CLASSES).filter(k=>k!==pcls);
+  newGame(pcls,others[Math.floor(Math.random()*others.length)]);
+  for(const el of els.values()) el.remove(); els.clear(); fxEl.innerHTML='';
+  sel=null; areaPick=null; inspect=null; busy=false;
+  log(`對戰開始：你是${CLASSES[pcls].name}，對手是${CLASSES[S.sides.E.cls].name}`);
+  ov.hidden=true; ov.innerHTML='';
+  startTurn('P');
+}
+ui.over=()=>{
+  const win=S.winner==='P';
+  ov.hidden=false;
+  ov.innerHTML=`<div class="panel"><h2>${win?'勝利':'敗北'}</h2>
+    <p class="result">${win?`第 ${S.turn} 回合擊倒對手英雄。`:`撐到第 ${S.turn} 回合，你的英雄倒下了。`}剩餘生命：你 ${S.sides.P.hp}・對手 ${S.sides.E.hp}</p>
+    <div class="row"><button type="button" class="end" id="againBtn">同職業再來一場</button><button type="button" class="btn" id="pickBtn">換職業</button><button type="button" class="btn" id="viewBtn">看戰場</button></div></div>`;
+  $('#againBtn').onclick=()=>startGame(S.sides.P.cls);
+  $('#pickBtn').onclick=showMenu;
+  $('#viewBtn').onclick=()=>{ov.hidden=true;};
+};
+$('#rulesBtn').addEventListener('click',()=>{
+  ov.hidden=false;
+  ov.innerHTML=`<div class="panel"><h2 style="font-size:28px">規則</h2>${RULES}<div class="row" style="margin-top:14px"><button type="button" class="end" id="closeBtn">回到戰場</button></div></div>`;
+  $('#closeBtn').onclick=()=>{ if(S&&S.phase!=='over') ov.hidden=true; else if(S) ui.over(); else showMenu(); };
+});
+$('#newBtn').addEventListener('click',()=>{ if(busy) return; showMenu(); });
+
+window.addEventListener('resize',()=>{clearTimeout(window.__rz); window.__rz=setTimeout(()=>{ if(S) layout(); },120);});
+
+window.claude?.hot?.snapshot?.(()=>({S:stable}));
+function boot(data){
+  newGame('warrior','mage'); layout();
+  if(data&&data.S&&data.S.phase==='play'){ S=data.S; busy=false; S.active='P'; ov.hidden=true; render(); }
+  else showMenu();
+}
+window.claude?.hot?.ready ? window.claude.hot.ready(boot) : boot(window.claude?.hot?.data ?? {});
+}
+</script>
+
+</body>
+</html>

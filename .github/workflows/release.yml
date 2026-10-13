@@ -1,0 +1,98 @@
+name: 測試、發版與部署
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    if: "!contains(github.event.head_commit.message, '[skip release]')"
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.ver.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: 模擬對戰測試
+        run: node tests/sim.js 200
+
+      - name: 決定版本號（已發布過就自動 +1）
+        id: ver
+        run: |
+          v=$(tr -d ' \n\r' < VERSION)
+          if git rev-parse "v$v" >/dev/null 2>&1; then
+            IFS=. read -r ma mi pa <<< "$v"
+            v="$ma.$mi.$((pa+1))"
+            echo "$v" > VERSION
+            sed -i "s/const VERSION='[^']*'/const VERSION='$v'/" index.html
+            {
+              echo "# 變更紀錄"
+              echo
+              echo "## [$v] - $(date -u +%F)"
+              echo
+              git log -1 --pretty=format:'- %s'
+              echo
+              tail -n +2 CHANGELOG.md
+            } > CHANGELOG.tmp && mv CHANGELOG.tmp CHANGELOG.md
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add VERSION index.html CHANGELOG.md
+            git commit -m "chore: 發布 v$v [skip release]"
+            git push
+          fi
+          echo "version=$v" >> "$GITHUB_OUTPUT"
+
+      - name: 取出這一版的變更說明
+        run: |
+          v=${{ steps.ver.outputs.version }}
+          awk -v v="$v" '
+            $0 ~ "^## \\[" v "\\]" {on=1; next}
+            on && /^## \[/ {exit}
+            on {print}
+          ' CHANGELOG.md > notes.md
+          [ -s notes.md ] || echo "版本 v$v" > notes.md
+          cat notes.md
+
+      - name: 建立 tag 與 Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          v=${{ steps.ver.outputs.version }}
+          git tag "v$v"
+          git push origin "v$v"
+          gh release create "v$v" index.html --title "三路卡陣 v$v" --notes-file notes.md
+
+  pages:
+    needs: release
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: 準備網站檔案
+        run: mkdir -p _site && cp index.html _site/
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - id: deploy
+        uses: actions/deploy-pages@v4
