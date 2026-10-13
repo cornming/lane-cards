@@ -231,6 +231,104 @@ button:focus-visible,.card:focus-visible{outline:2px solid var(--gold-hi);outlin
 .result{font-size:16px;margin:8px 0 16px}
 .row{display:flex;gap:8px;flex-wrap:wrap}
 
+/* ===== 主城與各功能畫面 ===== */
+.btn.on{border-color:var(--gold-hi);color:var(--gold-hi)}
+.tbar{display:flex;flex-wrap:wrap;align-items:center;gap:10px 18px;padding:8px 14px;margin-bottom:10px}
+.tbar .me{display:flex;align-items:center;gap:10px}
+.face.sm{width:44px;height:44px;font-size:22px;border-width:2px;--c:rgba(63,163,255,.55)}
+.tbar .me b{font-family:var(--font-display);font-size:15px;color:var(--fg)}
+.tbar .lv{margin-left:8px;font-family:var(--font-num);color:var(--gold-hi)}
+.xp{width:150px;height:7px;border-radius:2px;background:#050d0e;border:1px solid var(--gold-lo);overflow:hidden;margin-top:3px}
+.xp i{display:block;height:100%;background:linear-gradient(90deg,#3fa3ff,#9fe0ff)}
+.tbar .cur{display:flex;gap:14px;flex-wrap:wrap;font-size:13px;color:var(--muted)}
+.tbar .cur b{font-family:var(--font-num);color:var(--fg)}
+.tbar .tools{margin-left:auto;display:flex;align-items:center;gap:8px}
+.townmap{padding:0;overflow:hidden}
+.sky{padding:22px 20px 18px;background:linear-gradient(180deg,rgba(63,120,170,.35),transparent),
+  radial-gradient(ellipse 60% 80% at 80% 0%, rgba(241,215,140,.18), transparent 70%);border-bottom:1px solid var(--gold-lo)}
+.sky .title{font-family:var(--font-display);font-weight:900;font-size:clamp(30px,6vw,46px);letter-spacing:.16em;margin:0;
+  background:linear-gradient(180deg,#fff2c4,var(--gold) 60%,var(--gold-lo));-webkit-background-clip:text;background-clip:text;color:transparent}
+.sky p{margin:4px 0 0;color:var(--muted)}
+.blds{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;padding:16px}
+.bld{display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center;padding:14px 10px;border-radius:4px;color:var(--fg);
+  background:linear-gradient(180deg,var(--teal3),var(--teal2));border:1px solid var(--gold-lo);box-shadow:inset 0 0 0 1px #050d0e;transition:transform .15s}
+.bld:hover:not(:disabled){transform:translateY(-3px);border-color:var(--gold-hi)}
+.bld b{font-family:var(--font-display);font-size:17px;color:var(--gold-hi);letter-spacing:.08em}
+.bld span:last-child{font-size:12px;color:var(--muted)}
+.bld.soon{opacity:.55;cursor:default}
+.medal{width:62px;height:62px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:30px;
+  background:radial-gradient(circle at 40% 35%,#3a5a5c,#0b1b1d);border:3px solid var(--gold);box-shadow:0 0 0 2px #050d0e,0 3px 8px rgba(0,0,0,.6)}
+.screen{padding:14px}
+.sthead{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.sthead h2{margin:0;font-family:var(--font-display);font-weight:900;font-size:24px;letter-spacing:.12em;color:var(--gold-hi)}
+.sthead .rate{margin-left:auto;color:var(--muted)}
+.sthead .rate b{color:var(--gold-hi);font-family:var(--font-num)}
+.muted{color:var(--muted);font-size:13px}
+.regions{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:12px}
+.region{display:flex;flex-direction:column;align-items:center;gap:2px;padding:12px 8px;border-radius:4px;color:var(--fg);
+  background:linear-gradient(180deg,var(--tone),#101614);border:1px solid var(--gold-lo)}
+.region .ic{font-size:28px}
+.region b{font-family:var(--font-display);color:var(--gold-hi)}
+.region em{font-style:normal;font-family:var(--font-num);font-size:12px;color:var(--muted)}
+.region.on{border-color:var(--gold-hi);box-shadow:0 0 0 1px var(--gold-hi),0 0 14px rgba(241,215,140,.35)}
+.region.lock{opacity:.45;cursor:default}
+.chapter{border:1px solid var(--gold-lo);border-radius:4px;padding:12px;background:linear-gradient(180deg,color-mix(in srgb,var(--tone) 35%,transparent),rgba(0,0,0,.25))}
+.chapter h3{margin:0 0 10px;font-family:var(--font-display);color:var(--gold-hi)}
+.stages{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}
+.stage{background:rgba(0,0,0,.35);border:1px solid #0a1718;border-radius:3px;padding:10px;display:flex;flex-direction:column;gap:4px}
+.stage .sn{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.stage .sn b{font-family:var(--font-display);font-size:16px}
+.stage .sd{font-size:13px;color:var(--muted)}
+.stage .end{margin:6px 0 0;align-self:flex-start}
+.stage.lock{opacity:.55}
+.stars{color:var(--atk);font-size:11px;letter-spacing:-1px}
+.stars i{color:rgba(255,255,255,.18);font-style:normal}
+.deckwrap{display:grid;grid-template-columns:270px minmax(0,1fr);gap:12px;align-items:start}
+.decklist{background:rgba(0,0,0,.35);border:1px solid #0a1718;border-radius:3px;padding:10px;display:flex;flex-direction:column;gap:8px}
+.decklist h3{margin:0;font-family:var(--font-display);color:var(--gold-hi);display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.dhead{display:flex;justify-content:space-between;align-items:center}
+.dhead b{font-family:var(--font-display);color:var(--gold-hi)}
+.dhead .bad{color:var(--hp)}
+.dpow{color:var(--muted)}
+.dpow b{font-family:var(--font-num);color:var(--gold-hi);font-size:18px}
+.drows{display:flex;flex-direction:column;gap:3px;max-height:440px;overflow:auto;padding-right:4px}
+.drow{display:flex;align-items:center;gap:8px;padding:4px 6px;border-radius:2px;background:linear-gradient(90deg,var(--teal3),transparent);border:1px solid transparent;color:var(--fg);text-align:left}
+.drow:hover{border-color:var(--hp)}
+.dw{width:20px;height:20px;border-radius:50%;background:#11181f;border:1px solid var(--gold-lo);font-family:var(--font-num);font-size:12px;display:flex;align-items:center;justify-content:center}
+.dn{flex:1}
+.dk{font-family:var(--font-num);color:var(--gold-hi)}
+.pool{min-width:0}
+.tabs{margin-bottom:10px}
+.cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:12px 10px;padding-top:8px}
+.card.mini{width:auto;max-width:100px}
+.card.mini .stars{position:absolute;top:2px;right:4px}
+.card.mini .tag{position:absolute;left:50%;transform:translateX(-50%);bottom:-18px;font-size:11px;color:var(--muted);white-space:nowrap}
+.cgrid .card.mini{margin-bottom:14px}
+.card.mini.maxed{opacity:.5}
+.card.mini.picked{box-shadow:inset 0 0 0 1px #050d0e,0 0 0 2px var(--gold-hi),0 0 14px rgba(241,215,140,.5)}
+.card.mini:disabled{cursor:default}
+.up{color:var(--heal)!important}
+.codex{display:grid;grid-template-columns:200px minmax(0,1fr);gap:12px;align-items:start}
+.ctabs{display:flex;flex-direction:column;gap:4px}
+.ctab{display:flex;justify-content:space-between;padding:6px 10px;border-radius:3px;color:var(--fg);background:linear-gradient(180deg,var(--teal3),var(--teal2));border:1px solid #0a1718}
+.ctab.on{border-color:var(--gold-hi);color:var(--gold-hi)}
+.ctab em{font-style:normal;font-family:var(--font-num);color:var(--muted)}
+.herohall .hstat{display:flex;gap:16px;align-items:center;margin-bottom:12px;--c:rgba(63,163,255,.55)}
+.herohall ul{margin:0;padding-left:18px}
+.herohall h3{font-family:var(--font-display);color:var(--gold-hi);margin:10px 0 4px}
+.cls.on{border-color:var(--gold-hi);box-shadow:0 0 0 1px var(--gold-hi)}
+.cls em{font-style:normal;font-size:12px;color:var(--heal)}
+.rewards{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 12px}
+.rewards span{padding:3px 10px;border:1px solid var(--gold-lo);border-radius:3px;background:var(--teal2);font-family:var(--font-num)}
+.loot{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:22px}
+.loot .card.mini{width:92px}
+@media (max-width:760px){
+  .deckwrap,.codex{grid-template-columns:minmax(0,1fr)}
+  .ctabs{flex-direction:row;flex-wrap:wrap}
+  .drows{max-height:200px}
+  .xp{width:110px}
+}
+
 @media (max-width:980px){
   .hud{grid-template-columns:minmax(0,1fr)}
   .hud .rack{order:-1}
@@ -247,14 +345,17 @@ button:focus-visible,.card:focus-visible{outline:2px solid var(--gold-hi);outlin
 <body>
 
 <div id="app">
+<div id="town" hidden></div>
+<div id="battle">
   <header class="bar frame">
     <h1>三路卡陣</h1><span class="ver" id="ver"></span>
     <div class="turn">第 <b id="turnNo">1</b> 回合</div>
     <div id="phase" class="phase p">你的回合</div>
     <div class="tools">
+      <button class="btn" id="autoBtn" type="button" aria-pressed="false">自動：關</button>
       <button class="btn" id="speedBtn" type="button">速度 1×</button>
       <button class="btn" id="rulesBtn" type="button">規則</button>
-      <button class="btn" id="newBtn" type="button">重新開始</button>
+      <button class="btn" id="newBtn" type="button">撤退回城</button>
     </div>
   </header>
 
@@ -276,11 +377,12 @@ button:focus-visible,.card:focus-visible{outline:2px solid var(--gold-hi);outlin
     <div class="info" id="info"></div>
   </section>
 </div>
+</div>
 <div id="overlay"></div>
 
 <script>
 /* ================= 規則資料 ================= */
-const VERSION='0.3.0';
+const VERSION='0.4.0';
 const LANES=3, COLS=10, HERO_HP=40, HAND_MAX=6, START_HAND=3, SUDDEN=20;
 const TYPES={
   melee:{n:'近戰',phys:1,fx:''},
@@ -376,20 +478,27 @@ const unitAt=(l,c)=>S.units.find(u=>u.lane===l&&u.col===c);
 const dist=(a,b)=>Math.abs(a.lane-b.lane)+Math.abs(a.col-b.col);
 const isFly=u=>!!CARDS[u.id].ab.fly;
 
-function newSide(cls){
-  const deck=[]; for(const [id,n] of Object.entries(CLASSES[cls].deck)) for(let i=0;i<n;i++) deck.push(id);
-  return {cls,hp:HERO_HP,maxHp:HERO_HP,deck:shuffle(deck),hand:[],discard:[]};
+function starterDeck(cls){const deck=[]; for(const [id,n] of Object.entries(CLASSES[cls].deck)) for(let i=0;i<n;i++) deck.push(id); return deck;}
+function newSide(cls,o={}){
+  const hp=o.hp||HERO_HP;
+  return {cls,hp,maxHp:hp,deck:shuffle((o.deck||starterDeck(cls)).slice()),hand:[],discard:[],stars:o.stars||{},starAll:o.starAll||1};
 }
-function newGame(pcls,ecls){
-  S={phase:'play',turn:1,active:'P',winner:null,sides:{P:newSide(pcls),E:newSide(ecls)},units:[],log:[],seq:1};
+// opts.P / opts.E：{deck:[卡牌 id], stars:{id:星級}, starAll:預設星級, hp:英雄生命}
+function newGame(pcls,ecls,opts={}){
+  S={phase:'play',turn:1,active:'P',winner:null,auto:false,ctx:opts.ctx||null,
+     sides:{P:newSide(pcls,opts.P),E:newSide(ecls,opts.E)},units:[],log:[],seq:1};
   for(const s of ['P','E']) for(let i=0;i<START_HAND;i++) draw(s);
 }
+const starOf=(sd,id)=>Math.min(5,Math.max(1,sd.stars[id]||sd.starAll||1));
+// 星級加成：每多一星，攻擊 +1、生命 +2
+const starAtk=(def,st)=>def.atk>0? def.atk+(st-1) : 0;
+const starHp=(def,st)=>def.hp+2*(st-1);
 function log(msg,side){S.log.unshift({msg,side:side||''}); if(S.log.length>40) S.log.pop(); ui.log();}
 function draw(side){
   const sd=S.sides[side];
   if(sd.hand.length>=HAND_MAX) return false;
   if(!sd.deck.length){ if(!sd.discard.length) return false; sd.deck=shuffle(sd.discard); sd.discard=[]; }
-  const id=sd.deck.pop(); sd.hand.push({uid:S.seq++,id,wait:CARDS[id].wait}); return true;
+  const id=sd.deck.pop(); sd.hand.push({uid:S.seq++,id,wait:CARDS[id].wait,star:starOf(sd,id)}); return true;
 }
 function removeFromHand(side,card){const h=S.sides[side].hand; const i=h.indexOf(card); if(i>=0) h.splice(i,1);}
 
@@ -532,9 +641,9 @@ async function act(u){
 }
 
 function summon(side,card,lane,col){
-  const def=CARDS[card.id];
-  const u={uid:S.seq++,id:def.id,side,lane,col,atk:def.atk,hp:def.hp,maxHp:def.hp,armor:def.armor,ward:def.ward,range:def.range,
-    st:{burn:0,poison:0,slow:0,stun:0}};
+  const def=CARDS[card.id], st=card.star||1;
+  const u={uid:S.seq++,id:def.id,side,lane,col,atk:starAtk(def,st),hp:starHp(def,st),maxHp:starHp(def,st),armor:def.armor,ward:def.ward,range:def.range,
+    star:st,st:{burn:0,poison:0,slow:0,stun:0}};
   removeFromHand(side,card); S.units.push(u);
   log(`${who(side)}召喚了${def.name}`,side);
   return u;
@@ -590,6 +699,7 @@ async function startTurn(side){
   if(S.turn>SUDDEN){ const n=S.turn-SUDDEN; log(`延長賽：${who(side)}的英雄受到 ${n} 點消耗傷害`,foeOf(side)); damageHero(side,n); if(S.phase!=='play') return; }
   ui.render();
   if(side==='E'){ await sleep(350); await aiTurn(); if(S.phase==='play') await endTurn('E'); }
+  else if(S.auto){ busy=true; ui.render(); await sleep(300); await aiTurn('P'); if(S.phase==='play'&&S.auto!==null) await endTurn('P'); }
   else { busy=false; ui.render(); }
 }
 async function endTurn(side){
@@ -830,6 +940,7 @@ function renderInfo(){
     }
     if(inspect.card){ box.innerHTML=defDetail(CARDS[inspect.card.id],`<div class="hint">還要 ${inspect.card.wait} 回合才能出牌。</div>`); return; }
   }
+  if(S.phase==='over'){ box.innerHTML=`<h3>${S.winner==='P'?'勝利':'敗北'}</h3><ul><li>戰鬥結束。按「撤退回城」回到主城，或從結算視窗再戰一次。</li></ul>`; return; }
   box.innerHTML = S.active==='P'&&!busy
     ? `<h3>你的回合</h3><ul><li>亮金框的牌待機值已歸零，點它再點戰場出牌。</li><li>出完牌按「結束回合」，你的單位會自動前進、攻擊。</li><li>點戰場上的單位可以看它的能力。</li></ul>`
     : `<h3>對手行動中</h3><ul><li>對手正在出牌，接著它的單位會自動前進、攻擊。</li></ul>`;
@@ -912,64 +1023,360 @@ $('#endBtn').addEventListener('click',()=>{
 $('#speedBtn').addEventListener('click',()=>{speed=speed===1?2:speed===2?4:1; $('#speedBtn').textContent=`速度 ${speed}×`; try{localStorage.setItem('lc-speed',speed)}catch(e){}});
 try{const s=+localStorage.getItem('lc-speed'); if([1,2,4].includes(s)){speed=s; $('#speedBtn').textContent=`速度 ${speed}×`;}}catch(e){}
 
-/* ---- 開場、規則、結算 ---- */
+/* ================= 成長系統：存檔、主城、戰役、牌組、圖鑑、鍊成 ================= */
+const SAVE_KEY='lanecards-save-v1';
+const DECK_MIN=15, DECK_MAX=25, COPY_MAX=3;
+const CHAPTERS=[
+  {name:'灰石村道',icon:'🏘️',tone:'#6f7d4f',stages:['村口哨站','磨坊小徑','灰石橋']},
+  {name:'霧松林',icon:'🌲',tone:'#3f6b55',stages:['林間空地','獵人營地','古樹祭壇']},
+  {name:'霜牙山口',icon:'🏔️',tone:'#5c7891',stages:['碎冰坡','雪狼洞','山口關隘']},
+  {name:'熔岩渡口',icon:'🌋',tone:'#8a4a2c',stages:['焦土堤','熔岩浮橋','火山渡口']},
+  {name:'黑曜要塞',icon:'🏰',tone:'#4a3d5c',stages:['外牆','迴廊','王座廳']},
+];
+const CLS_KEYS=Object.keys(CLASSES);
+const STAGES=[]; CHAPTERS.forEach((ch,ci)=>ch.stages.forEach((nm,si)=>{
+  const i=STAGES.length, boss=si===2;
+  STAGES.push({i,ci,si,name:nm,boss,ecls:CLS_KEYS[(i*3+ci)%4],hp:28+i*3+(boss?8:0),star:Math.min(5,1+Math.floor(i/3)),
+    gold:40+i*15,exp:30+i*12});
+}));
+const UNIT_IDS=Object.values(CARDS).filter(c=>c.kind==='unit').map(c=>c.id);
+const DROP_W=[0,50,30,14,6];
+
+let SV=null;
+function freshSave(cls){
+  const coll={};
+  const add=(id,n)=>{coll[id]=coll[id]||{n:0,star:1}; coll[id].n+=n;};
+  for(const [id,n] of Object.entries(CLASSES[cls].deck)) add(id,n);
+  for(const k of CLS_KEYS) if(k!==cls) for(const c of Object.values(CARDS)) if(c.kind==='skill'&&c.cls===k) add(c.id,2);
+  return {v:1,cls,level:1,exp:0,gold:100,gems:0,coll,deck:starterDeck(cls),cleared:{},wins:0,losses:0,created:Date.now()};
+}
+function loadSave(){ try{ const t=localStorage.getItem(SAVE_KEY); if(t){ const d=JSON.parse(t); if(d&&d.v===1) return d; } }catch(e){} return null; }
+function persist(){ try{ localStorage.setItem(SAVE_KEY,JSON.stringify(SV)); }catch(e){} }
+const expNeed=lv=>80+lv*40;
+const heroHpFor=lv=>Math.min(60,HERO_HP+2*(lv-1));
+const ownedN=id=>SV.coll[id]?.n||0;
+const starOfOwned=id=>SV.coll[id]?.star||1;
+function deckCounts(deck){const m={}; for(const id of deck) m[id]=(m[id]||0)+1; return m;}
+function deckLegalFor(cls,deck){ return deck.filter(id=>{const c=CARDS[id]; return c&&(c.kind==='unit'||c.cls===cls);}); }
+function deckPower(deck){
+  let p=0; for(const id of deck){ const c=CARDS[id], st=starOfOwned(id);
+    p+= c.kind==='unit'? (starAtk(c,st)*12+starHp(c,st)*5+(c.elite?40:0)) : 45; }
+  return Math.round(p);
+}
+function stageOpen(i){ return i===0 || !!SV.cleared[i-1]; }
+function rollDrop(){
+  const pool=[...UNIT_IDS, ...Object.values(CARDS).filter(c=>c.kind==='skill'&&c.cls===SV.cls).map(c=>c.id)];
+  const w=pool.map(id=>CARDS[id].kind==='unit'? DROP_W[quality(CARDS[id])] : 18);
+  let r=Math.random()*w.reduce((a,b)=>a+b,0);
+  for(let i=0;i<pool.length;i++){ r-=w[i]; if(r<=0) return pool[i]; }
+  return pool[0];
+}
+function gainCard(id){ SV.coll[id]=SV.coll[id]||{n:0,star:1}; SV.coll[id].n++; }
+function gainExp(n){
+  SV.exp+=n; const ups=[];
+  while(SV.exp>=expNeed(SV.level)){ SV.exp-=expNeed(SV.level); SV.level++; ups.push(SV.level); }
+  return ups;
+}
+function settle(win,ctx){
+  const out={gold:0,exp:0,cards:[],gems:0,levels:[],first:false};
+  if(ctx.kind==='stage'){
+    const st=STAGES[ctx.i];
+    if(win){
+      out.first=!SV.cleared[ctx.i]; SV.cleared[ctx.i]=true;
+      out.gold=st.gold*(out.first?2:1); out.exp=st.exp;
+      if(out.first){ out.cards.push(rollDrop()); out.gems=st.boss?3:1; if(st.boss) out.cards.push(rollDrop()); }
+      else if(Math.random()<0.4) out.cards.push(rollDrop());
+    } else out.exp=10;
+  } else {
+    if(win){ out.gold=25+SV.level*3; out.exp=18; if(Math.random()<0.25) out.cards.push(rollDrop()); }
+    else out.exp=6;
+  }
+  SV.gold+=out.gold; SV.gems+=out.gems; out.cards.forEach(gainCard);
+  out.levels=gainExp(out.exp);
+  if(win) SV.wins++; else SV.losses++;
+  persist();
+  return out;
+}
+
+{
+const townEl=$('#town'), battleEl=$('#battle'), ov=$('#overlay');
 $('#ver').textContent='v'+VERSION;
-const ov=$('#overlay');
+let view='home', deckFilter='all', codexTab='人類', alchemySel=null, mapCh=0;
+
 const RULES=`<ol class="rules">
-  <li>戰場有三條路，每條 10 格。你的英雄在${'<b>左側／下方</b>'}，對手在另一端。把對手英雄的 ${HERO_HP} 點生命打到 0 就獲勝。</li>
+  <li>戰場有三條路，每條 10 格。你的英雄在<b>左側／下方</b>，對手在另一端。把對手英雄的生命打到 0 就獲勝。</li>
   <li>每張牌都有<b>待機值</b>。你的回合開始時，待機區所有牌的待機值減 1，再抽 1 張牌（待機區最多 ${HAND_MAX} 張）。待機值歸零的牌才能出。</li>
   <li>單位只能召喚在自己這側的前 3 格（石牆可到 5 格）。一回合出幾張都可以。</li>
   <li>按下「結束回合」後，你的單位從最前面的開始依序自動行動：射程內有敵人就攻擊，沒有就往前走。走到底就直接攻擊英雄。</li>
   <li>友軍可以互相穿越，敵軍會擋路。飛行單位越過地面單位，地面近戰打不到它。</li>
   <li>物理傷害被護甲減免，魔法傷害被魔抗減免，神聖無視兩者。火焰燃燒、冰結緩速、雷擊暈眩、暗黑中毒。</li>
-  <li>技能牌是職業專屬，同樣有待機值，可以指定單位、範圍或直接生效。施放後有 ${MASTERY*100}% 機率「專精」，重新回到待機區。</li>
-  <li>卡框顏色代表品質：藍、紫、金，精銳單位是橙色。</li>
+  <li>技能牌是職業專屬，同樣有待機值。施放後有 ${MASTERY*100}% 機率「專精」，重新回到待機區。</li>
+  <li>卡框顏色代表品質：藍、紫、金，精銳單位是橙色。星級越高，攻擊和生命越高（每星攻擊 +1、生命 +2）。</li>
   <li>第 ${SUDDEN} 回合後進入延長賽：每回合開始，該方英雄受到逐回合增加的消耗傷害。</li>
 </ol>`;
-function showMenu(){
-  ov.hidden=false;
-  ov.innerHTML=`<div class="panel frame"><h2>三路卡陣</h2>
-    <p class="lead">三條石道、十格戰線。排好待機區、算準出牌時機，讓自動前進的部隊替你衝破敵陣。選一個職業出征，對手職業隨機。</p>
-    <div class="classes">${Object.entries(CLASSES).map(([k,c])=>`<button type="button" class="cls" data-cls="${k}"><span class="ic">${c.icon}</span><b>${c.name}</b><span>${c.desc}</span><span class="sig">技能：${c.sig}</span></button>`).join('')}</div>
-    <details style="margin-top:14px"><summary>怎麼玩</summary>${RULES}</details></div>`;
-  ov.querySelectorAll('.cls').forEach(b=>b.onclick=()=>startGame(b.dataset.cls));
+
+/* ---- 共用：小卡 ---- */
+function starsHTML(n){ return `<span class="stars">${'★'.repeat(n)}<i>${'★'.repeat(5-n)}</i></span>`; }
+function miniCard(id,o={}){
+  const def=CARDS[id], st=o.star||1, q=def.kind==='unit'?quality(def):2;
+  const tc= def.kind==='unit'? TCOLOR[def.type] : '#4a3a6a';
+  const stats= def.kind==='unit'? `<span class="a">${starAtk(def,st)}</span><span class="h">${starHp(def,st)}</span>` : `<span class="k">${CLASSES[def.cls].name}技能</span>`;
+  const tag=o.tag?`<span class="tag">${o.tag}</span>`:'';
+  return `<button type="button" class="card mini q${q} ${o.cls||''}" data-id="${id}" ${o.disabled?'disabled':''} aria-label="${def.name}">
+    <span class="w">${def.wait}</span>${def.kind==='unit'?starsHTML(st):''}
+    <span class="pt" style="--tc:${tc}"><span class="ic">${o.locked?'🔒':def.icon}</span></span>
+    <span class="nm">${o.locked?'？？？':def.name}</span><span class="ty">${def.kind==='unit'?RACE[id]+'・'+TYPES[def.type].n:''}</span>${o.locked?'':stats}${tag}</button>`;
 }
-function startGame(pcls){
-  const others=Object.keys(CLASSES).filter(k=>k!==pcls);
-  newGame(pcls,others[Math.floor(Math.random()*others.length)]);
+function topBar(){
+  const need=expNeed(SV.level), pct=Math.round(SV.exp/need*100), c=CLASSES[SV.cls];
+  return `<header class="tbar frame">
+    <div class="me"><div class="face sm">${c.icon}</div><div><b>指揮官・${c.name}</b><span class="lv">Lv.${SV.level}</span>
+      <div class="xp" title="經驗 ${SV.exp} / ${need}"><i style="width:${pct}%"></i></div></div></div>
+    <div class="cur"><span title="金幣">🪙 <b>${SV.gold}</b></span><span title="晶石">💎 <b>${SV.gems}</b></span><span title="戰績">⚔️ <b>${SV.wins}</b> 勝 <b>${SV.losses}</b> 敗</span></div>
+    <div class="tools"><span class="ver">v${VERSION}</span><button class="btn" id="tRules" type="button">規則</button></div>
+  </header>`;
+}
+function panel(title,body,extra=''){
+  return `${topBar()}<section class="screen frame"><div class="sthead"><button class="btn" data-go="home" type="button">← 主城</button><h2>${title}</h2>${extra}</div>${body}</section>`;
+}
+
+/* ---- 主城 ---- */
+const BUILDINGS=[
+  {go:'map',icon:'🗺️',name:'冒險地圖',desc:'五個章節、十五道關卡，首次通關有額外獎勵。'},
+  {go:'spar',icon:'⚔️',name:'練兵場',desc:'用目前牌組隨機對戰，快速賺取金幣與經驗。'},
+  {go:'deck',icon:'🎴',name:'牌組營帳',desc:'挑選要帶上戰場的卡牌，查看牌組戰鬥力。'},
+  {go:'codex',icon:'📚',name:'圖鑑書庫',desc:'依種族瀏覽所有卡牌與收集進度。'},
+  {go:'alchemy',icon:'⚗️',name:'鍊成工坊',desc:'消耗重複卡牌與金幣，提升卡牌星級。'},
+  {go:'hero',icon:'🛡️',name:'英雄大廳',desc:'查看等級與戰績，切換職業。'},
+  {go:'',icon:'🗼',name:'試煉之塔',desc:'逐層挑戰的爬塔模式。',soon:1},
+  {go:'',icon:'⛵',name:'遠征碼頭',desc:'派出部隊遠征，離線也能累積獎勵。',soon:1},
+];
+function homeView(){
+  const next=STAGES.find(st=>!SV.cleared[st.i]);
+  return `${topBar()}
+  <section class="townmap frame">
+    <div class="sky"><h1 class="title">三路卡陣</h1><p>${next?`下一關：${CHAPTERS[next.ci].name}・${next.name}`:'所有章節都已通關'}</p></div>
+    <div class="blds">${BUILDINGS.map(b=>`<button type="button" class="bld ${b.soon?'soon':''}" ${b.soon?'disabled':`data-go="${b.go}"`}>
+      <span class="medal">${b.icon}</span><b>${b.name}</b><span>${b.soon?'下一階段開放':b.desc}</span></button>`).join('')}</div>
+  </section>`;
+}
+
+/* ---- 冒險地圖 ---- */
+function mapView(){
+  const ch=CHAPTERS[mapCh];
+  const chs=CHAPTERS.map((c,ci)=>{
+    const sts=STAGES.filter(s=>s.ci===ci), done=sts.filter(s=>SV.cleared[s.i]).length, open=stageOpen(sts[0].i);
+    return `<button type="button" class="region ${ci===mapCh?'on':''} ${open?'':'lock'}" data-ch="${ci}" style="--tone:${c.tone}" ${open?'':'disabled'}>
+      <span class="ic">${open?c.icon:'🔒'}</span><b>第${'一二三四五'[ci]}章</b><span>${c.name}</span><em>${done}/3</em></button>`;
+  }).join('');
+  const sts=STAGES.filter(s=>s.ci===mapCh).map(st=>{
+    const open=stageOpen(st.i), done=!!SV.cleared[st.i], ec=CLASSES[st.ecls];
+    return `<div class="stage ${done?'done':''} ${open?'':'lock'}">
+      <div class="sn"><b>${st.si+1}. ${st.name}</b>${st.boss?'<span class="chip q4">首領</span>':''}${done?'<span class="chip q1">已通關</span>':''}</div>
+      <div class="sd">敵方：${ec.icon} ${ec.name}・英雄生命 ${st.hp}・卡牌 ${starsHTML(st.star)}</div>
+      <div class="sd">獎勵：🪙 ${st.gold}${done?'':'（首通 ×2）'}・經驗 ${st.exp}${done?'・40% 掉卡':'・必掉卡牌'}${st.boss&&!done?'・💎 3':(!done?'・💎 1':'')}</div>
+      <button type="button" class="end" data-fight="${st.i}" ${open?'':'disabled'}>${open?'出戰':'先通關前一關'}</button></div>`;
+  }).join('');
+  return panel('冒險地圖',`<div class="regions">${chs}</div><div class="chapter" style="--tone:${ch.tone}"><h3>${ch.icon} ${ch.name}</h3><div class="stages">${sts}</div></div>`);
+}
+
+/* ---- 牌組營帳 ---- */
+function deckView(){
+  SV.deck=deckLegalFor(SV.cls,SV.deck);
+  const cnt=deckCounts(SV.deck), n=SV.deck.length;
+  const ids=Object.keys(SV.coll).filter(id=>{const c=CARDS[id]; if(!c) return false; if(c.kind==='skill'&&c.cls!==SV.cls) return false;
+    if(deckFilter==='unit') return c.kind==='unit'; if(deckFilter==='skill') return c.kind==='skill'; return true;})
+    .sort((a,b)=>CARDS[a].kind.localeCompare(CARDS[b].kind)||CARDS[a].wait-CARDS[b].wait);
+  const list=Object.entries(cnt).sort((a,b)=>CARDS[a[0]].wait-CARDS[b[0]].wait).map(([id,k])=>
+    `<button type="button" class="drow" data-rm="${id}"><span class="dw">${CARDS[id].wait}</span><span class="di">${CARDS[id].icon}</span><span class="dn">${CARDS[id].name}</span><span class="dk">×${k}</span></button>`).join('');
+  const ok=n>=DECK_MIN&&n<=DECK_MAX;
+  const grid=ids.map(id=>{ const own=Math.min(COPY_MAX,ownedN(id)), inD=cnt[id]||0;
+    return miniCard(id,{star:starOfOwned(id),tag:`${inD}/${own}`,cls:inD>=own?'maxed':''}); }).join('');
+  return panel('牌組營帳',`
+    <div class="deckwrap">
+      <aside class="decklist">
+        <div class="dhead"><b>目前牌組</b><span class="${ok?'':'bad'}">${n} 張（${DECK_MIN}～${DECK_MAX}）</span></div>
+        <div class="dpow">牌組戰鬥力 <b>${deckPower(SV.deck)}</b></div>
+        <div class="drows">${list||'<p class="muted">牌組是空的，點右邊的卡加入。</p>'}</div>
+        <div class="row"><button type="button" class="btn" id="dReset">恢復預設牌組</button></div>
+        <p class="muted">點左邊的列移除一張。同名卡最多 ${COPY_MAX} 張，且不能超過持有數量；技能牌只能放目前職業的。</p>
+      </aside>
+      <div class="pool">
+        <div class="row tabs">${[['all','全部'],['unit','士兵'],['skill','技能']].map(([k,t])=>`<button type="button" class="btn ${deckFilter===k?'on':''}" data-df="${k}">${t}</button>`).join('')}</div>
+        <div class="cgrid">${grid}</div>
+      </div>
+    </div>`);
+}
+
+/* ---- 圖鑑書庫 ---- */
+const RACES=['人類','精靈','獸人','亡靈','地精','巨魔','野獸'];
+function codexView(){
+  const tabs=[...RACES,...CLS_KEYS.map(k=>CLASSES[k].name+'技能')];
+  const idsFor=t=> RACES.includes(t)? UNIT_IDS.filter(id=>RACE[id]===t)
+    : Object.values(CARDS).filter(c=>c.kind==='skill'&&CLASSES[c.cls].name+'技能'===t).map(c=>c.id);
+  const all=Object.keys(CARDS), have=all.filter(id=>ownedN(id)>0).length;
+  const pct=t=>{const ids=idsFor(t); return ids.length? Math.round(ids.filter(id=>ownedN(id)>0).length/ids.length*100):0;};
+  const ids=idsFor(codexTab);
+  return panel('圖鑑書庫',`
+    <div class="codex">
+      <aside class="ctabs">${tabs.map(t=>`<button type="button" class="ctab ${t===codexTab?'on':''}" data-ct="${t}"><span>${t}</span><em>${pct(t)}%</em></button>`).join('')}</aside>
+      <div class="pool"><div class="cgrid">${ids.map(id=>{const o=ownedN(id); return miniCard(id,{star:starOfOwned(id),locked:!o,tag:o?`持有 ${o}`:''});}).join('')}</div></div>
+    </div>`, `<span class="rate">總收集率 <b>${Math.round(have/all.length*100)}%</b>（${have}/${all.length}）</span>`);
+}
+
+/* ---- 鍊成工坊 ---- */
+const upCost=st=>({copies:st, gold:60*st});
+function alchemyView(){
+  const ids=Object.keys(SV.coll).filter(id=>CARDS[id]&&CARDS[id].kind==='unit').sort((a,b)=>ownedN(b)-ownedN(a));
+  const sel=alchemySel&&SV.coll[alchemySel]? alchemySel : null;
+  let detail='<p class="muted">選一張士兵卡，查看升星需求。</p>';
+  if(sel){
+    const def=CARDS[sel], st=starOfOwned(sel), cost=upCost(st), n=ownedN(sel);
+    const can= st<5 && n-1>=cost.copies && SV.gold>=cost.gold;
+    detail= st>=5? `<h3>${def.icon} ${def.name}</h3><p>已經是最高的五星。</p>` :
+      `<h3>${def.icon} ${def.name} ${starsHTML(st)} → ${starsHTML(st+1)}</h3>
+       <div class="stats"><span>攻 <b>${starAtk(def,st)}</b> → <b class="up">${starAtk(def,st+1)}</b></span><span>血 <b>${starHp(def,st)}</b> → <b class="up">${starHp(def,st+1)}</b></span></div>
+       <ul><li>消耗重複卡 ${cost.copies} 張（持有 ${n} 張，至少保留 1 張）</li><li>消耗金幣 ${cost.gold}（持有 ${SV.gold}）</li></ul>
+       <button type="button" class="end" id="doUp" ${can?'':'disabled'}>${can?'鍊成升星':'材料不足'}</button>`;
+  }
+  const grid=ids.map(id=>miniCard(id,{star:starOfOwned(id),tag:`×${ownedN(id)}`,cls:id===sel?'picked':''})).join('');
+  return panel('鍊成工坊',`<div class="deckwrap"><aside class="decklist alc">${detail}<p class="muted">星級提升後，所有牌組裡的同名卡都會變強：每星攻擊 +1、生命 +2。重複的卡可以從關卡掉落取得。</p></aside><div class="pool"><div class="cgrid">${grid}</div></div></div>`);
+}
+
+/* ---- 英雄大廳 ---- */
+function heroView(){
+  return panel('英雄大廳',`
+    <div class="herohall">
+      <div class="hstat"><div class="face">${CLASSES[SV.cls].icon}</div>
+        <ul><li>等級 <b>Lv.${SV.level}</b>（經驗 ${SV.exp} / ${expNeed(SV.level)}）</li><li>英雄生命 <b>${heroHpFor(SV.level)}</b>（每升一級 +2，上限 60）</li>
+        <li>戰績 <b>${SV.wins}</b> 勝 <b>${SV.losses}</b> 敗</li><li>已通關 <b>${Object.keys(SV.cleared).length}</b> / ${STAGES.length} 關</li></ul></div>
+      <h3>職業</h3><p class="muted">切換職業不用花費。牌組裡其他職業的技能牌會自動移除，記得到牌組營帳補上新職業的技能。</p>
+      <div class="classes">${CLS_KEYS.map(k=>{const c=CLASSES[k]; return `<button type="button" class="cls ${k===SV.cls?'on':''}" data-cls="${k}"><span class="ic">${c.icon}</span><b>${c.name}</b><span>${c.desc}</span><span class="sig">技能：${c.sig}</span>${k===SV.cls?'<em>目前職業</em>':''}</button>`;}).join('')}</div>
+      <div class="row" style="margin-top:16px"><button type="button" class="btn" id="wipe">清除存檔重新開始</button></div>
+    </div>`);
+}
+
+function renderTown(){
+  townEl.innerHTML = view==='map'? mapView() : view==='deck'? deckView() : view==='codex'? codexView() : view==='alchemy'? alchemyView() : view==='hero'? heroView() : homeView();
+}
+function go(v){ if(v==='spar'){ startSpar(); return; } view=v; renderTown(); window.scrollTo(0,0); }
+function showTown(v){ battleEl.hidden=true; townEl.hidden=false; ov.hidden=true; if(v) view=v; renderTown(); }
+
+townEl.addEventListener('click',e=>{
+  const t=e.target.closest('button'); if(!t) return;
+  if(t.dataset.go!==undefined && t.dataset.go!==''){ go(t.dataset.go); return; }
+  if(t.id==='tRules'){ showRules(); return; }
+  if(t.dataset.ch!==undefined){ mapCh=+t.dataset.ch; renderTown(); return; }
+  if(t.dataset.fight!==undefined){ startStage(+t.dataset.fight); return; }
+  if(t.dataset.df){ deckFilter=t.dataset.df; renderTown(); return; }
+  if(t.dataset.rm){ const i=SV.deck.lastIndexOf(t.dataset.rm); if(i>=0) SV.deck.splice(i,1); persist(); renderTown(); return; }
+  if(t.id==='dReset'){ SV.deck=starterDeck(SV.cls).filter(id=>ownedN(id)>0); persist(); renderTown(); return; }
+  if(t.dataset.ct){ codexTab=t.dataset.ct; renderTown(); return; }
+  if(t.id==='doUp'){ const id=alchemySel, st=starOfOwned(id), c=upCost(st);
+    if(st<5&&ownedN(id)-1>=c.copies&&SV.gold>=c.gold){ SV.coll[id].n-=c.copies; SV.coll[id].star=st+1; SV.gold-=c.gold;
+      const cnt=deckCounts(SV.deck); while((cnt[id]||0)>Math.min(COPY_MAX,SV.coll[id].n)){ SV.deck.splice(SV.deck.lastIndexOf(id),1); cnt[id]--; }
+      persist(); } renderTown(); return; }
+  if(t.dataset.cls&&view==='hero'){ SV.cls=t.dataset.cls; SV.deck=deckLegalFor(SV.cls,SV.deck); persist(); renderTown(); return; }
+  if(t.id==='wipe'){ ov.hidden=false; ov.innerHTML=`<div class="panel frame"><h2 style="font-size:28px">清除存檔？</h2><p class="lead">等級、卡牌、金幣與通關紀錄都會刪除，無法復原。</p>
+      <div class="row"><button type="button" class="end" id="wipeYes">確定清除</button><button type="button" class="btn" id="wipeNo">取消</button></div></div>`;
+    $('#wipeYes').onclick=()=>{ try{localStorage.removeItem(SAVE_KEY);}catch(e){} SV=null; showCreate(); };
+    $('#wipeNo').onclick=()=>{ ov.hidden=true; }; return; }
+  if(t.classList.contains('mini')){
+    const id=t.dataset.id;
+    if(view==='deck'){ const cnt=deckCounts(SV.deck); if((cnt[id]||0)<Math.min(COPY_MAX,ownedN(id)) && SV.deck.length<DECK_MAX){ SV.deck.push(id); persist(); renderTown(); } return; }
+    if(view==='alchemy'){ alchemySel=id; renderTown(); return; }
+  }
+});
+
+/* ---- 開戰與結算 ---- */
+function deckReady(){ const n=SV.deck.length; return n>=DECK_MIN&&n<=DECK_MAX; }
+function needDeck(){ ov.hidden=false; ov.innerHTML=`<div class="panel frame"><h2 style="font-size:28px">牌組張數不符</h2><p class="lead">牌組需要 ${DECK_MIN}～${DECK_MAX} 張，目前 ${SV.deck.length} 張。</p><div class="row"><button type="button" class="end" id="toDeck">前往牌組營帳</button></div></div>`; $('#toDeck').onclick=()=>showTown('deck'); }
+function myStars(){ const m={}; for(const id of Object.keys(SV.coll)) m[id]=SV.coll[id].star||1; return m; }
+function launch(ecls,eopts,ctx,label){
+  newGame(SV.cls,ecls,{ctx,P:{deck:SV.deck.slice(),stars:myStars(),hp:heroHpFor(SV.level)},E:eopts});
+  S.auto=autoPref;
   for(const el of els.values()) el.remove(); els.clear(); fxEl.innerHTML='';
   sel=null; areaPick=null; inspect=null; busy=false;
-  log(`對戰開始：你是${CLASSES[pcls].name}，對手是${CLASSES[S.sides.E.cls].name}`);
-  ov.hidden=true; ov.innerHTML='';
+  townEl.hidden=true; battleEl.hidden=false; ov.hidden=true; ov.innerHTML='';
+  layout(); syncAuto();
+  log(`${label}：你是${CLASSES[SV.cls].name}，對手是${CLASSES[ecls].name}`);
   startTurn('P');
 }
+function startStage(i){
+  if(!deckReady()) return needDeck();
+  const st=STAGES[i];
+  launch(st.ecls,{starAll:st.star,hp:st.hp},{kind:'stage',i},`${CHAPTERS[st.ci].name}・${st.name}`);
+}
+function startSpar(){
+  if(!deckReady()) return needDeck();
+  const ecls=CLS_KEYS[Math.floor(Math.random()*4)];
+  launch(ecls,{starAll:Math.min(5,1+Math.floor(SV.level/4)),hp:heroHpFor(SV.level)},{kind:'spar'},'練兵場');
+}
 ui.over=()=>{
-  const win=S.winner==='P';
+  const win=S.winner==='P', ctx=S.ctx||{kind:'spar'};
+  const r=settle(win,ctx);
+  const st=ctx.kind==='stage'?STAGES[ctx.i]:null, nextOpen=st&&STAGES[st.i+1]&&stageOpen(st.i+1);
+  const cards=r.cards.length? `<div class="loot">${r.cards.map(id=>miniCard(id,{star:starOfOwned(id),tag:'新獲得'})).join('')}</div>`:'';
   ov.hidden=false;
   ov.innerHTML=`<div class="panel frame"><h2>${win?'勝利':'敗北'}</h2>
-    <p class="result">${win?`第 ${S.turn} 回合擊倒對手英雄。`:`撐到第 ${S.turn} 回合，你的英雄倒下了。`}剩餘生命：你 ${S.sides.P.hp}・對手 ${S.sides.E.hp}</p>
-    <div class="row"><button type="button" class="end" id="againBtn">同職業再來一場</button><button type="button" class="btn" id="pickBtn">換職業</button><button type="button" class="btn" id="viewBtn">看戰場</button></div></div>`;
-  $('#againBtn').onclick=()=>startGame(S.sides.P.cls);
-  $('#pickBtn').onclick=showMenu;
+    <p class="result">${win?`第 ${S.turn} 回合擊倒對手英雄。`:`撐到第 ${S.turn} 回合，你的英雄倒下了。`}${r.first?'首次通關！':''}</p>
+    <div class="rewards"><span>🪙 +${r.gold}</span><span>經驗 +${r.exp}</span>${r.gems?`<span>💎 +${r.gems}</span>`:''}${r.levels.length?`<span class="up">升到 Lv.${r.levels[r.levels.length-1]}！英雄生命 ${heroHpFor(SV.level)}</span>`:''}</div>
+    ${cards}
+    <div class="row">${win&&nextOpen?`<button type="button" class="end" id="nextBtn">下一關</button>`:''}
+      <button type="button" class="${win&&nextOpen?'btn':'end'}" id="againBtn">再戰一次</button>
+      <button type="button" class="btn" id="homeBtn">回主城</button><button type="button" class="btn" id="viewBtn">看戰場</button></div></div>`;
+  if($('#nextBtn')) $('#nextBtn').onclick=()=>startStage(st.i+1);
+  $('#againBtn').onclick=()=>ctx.kind==='stage'?startStage(ctx.i):startSpar();
+  $('#homeBtn').onclick=()=>showTown(ctx.kind==='stage'?'map':'home');
   $('#viewBtn').onclick=()=>{ov.hidden=true;};
 };
-$('#rulesBtn').addEventListener('click',()=>{
+function showRules(){
   ov.hidden=false;
-  ov.innerHTML=`<div class="panel frame"><h2 style="font-size:30px">規則</h2>${RULES}<div class="row" style="margin-top:14px"><button type="button" class="end" id="closeBtn">回到戰場</button></div></div>`;
-  $('#closeBtn').onclick=()=>{ if(S&&S.phase!=='over') ov.hidden=true; else if(S) ui.over(); else showMenu(); };
+  ov.innerHTML=`<div class="panel frame"><h2 style="font-size:30px">規則</h2>${RULES}<div class="row" style="margin-top:14px"><button type="button" class="end" id="closeBtn">關閉</button></div></div>`;
+  $('#closeBtn').onclick=()=>{ if(S&&S.phase==='over'&&!battleEl.hidden) ui.over(); else ov.hidden=true; };
+}
+$('#rulesBtn').addEventListener('click',showRules);
+$('#newBtn').addEventListener('click',()=>{
+  if(!S||S.phase!=='play'){ showTown(); return; }
+  ov.hidden=false; ov.innerHTML=`<div class="panel frame"><h2 style="font-size:28px">撤退回城？</h2><p class="lead">這場會算作敗北，只拿到少量經驗。</p>
+    <div class="row"><button type="button" class="end" id="rtYes">撤退</button><button type="button" class="btn" id="rtNo">繼續戰鬥</button></div></div>`;
+  $('#rtYes').onclick=()=>{ const ctx=S.ctx||{kind:'spar'}; S.phase='over'; S.winner='E'; S.auto=null; settle(false,ctx); showTown(ctx.kind==='stage'?'map':'home'); };
+  $('#rtNo').onclick=()=>{ ov.hidden=true; };
 });
-$('#newBtn').addEventListener('click',()=>{ if(busy) return; showMenu(); });
 
-window.addEventListener('resize',()=>{clearTimeout(window.__rz); window.__rz=setTimeout(()=>{ if(S) layout(); },120);});
+/* ---- 自動戰鬥 ---- */
+let autoPref=false;
+try{ autoPref=localStorage.getItem('lc-auto')==='1'; }catch(e){}
+function syncAuto(){ const b=$('#autoBtn'); b.textContent=`自動：${S&&S.auto?'開':'關'}`; b.setAttribute('aria-pressed',S&&S.auto?'true':'false'); b.classList.toggle('on',!!(S&&S.auto)); }
+$('#autoBtn').addEventListener('click',()=>{
+  if(!S||S.phase!=='play') return;
+  S.auto=!S.auto; autoPref=S.auto; try{localStorage.setItem('lc-auto',S.auto?'1':'0');}catch(e){}
+  syncAuto();
+  if(S.auto&&!busy&&S.active==='P'){ sel=null; areaPick=null; inspect=null; busy=true; render();
+    (async()=>{ await aiTurn('P'); if(S.phase==='play'&&S.auto) await endTurn('P'); else { busy=false; render(); } })(); }
+});
 
-window.claude?.hot?.snapshot?.(()=>({S:stable}));
+/* ---- 建立角色 ---- */
+function showCreate(){
+  battleEl.hidden=true; townEl.hidden=true; ov.hidden=false;
+  ov.innerHTML=`<div class="panel frame"><h2>三路卡陣</h2>
+    <p class="lead">三條石道、十格戰線。排好待機區、算準出牌時機，讓自動前進的部隊替你衝破敵陣。先選一個職業，之後可以在英雄大廳切換。</p>
+    <div class="classes">${CLS_KEYS.map(k=>{const c=CLASSES[k]; return `<button type="button" class="cls" data-cls="${k}"><span class="ic">${c.icon}</span><b>${c.name}</b><span>${c.desc}</span><span class="sig">技能：${c.sig}</span></button>`;}).join('')}</div>
+    <details style="margin-top:14px"><summary>怎麼玩</summary>${RULES}</details></div>`;
+  ov.querySelectorAll('.cls').forEach(b=>b.onclick=()=>{ SV=freshSave(b.dataset.cls); persist(); showTown('home'); });
+}
+
+window.addEventListener('resize',()=>{clearTimeout(window.__rz); window.__rz=setTimeout(()=>{ if(S&&!battleEl.hidden) layout(); },120);});
+window.claude?.hot?.snapshot?.(()=>({view}));
 function boot(data){
   newGame('warrior','mage'); layout();
-  if(data&&data.S&&data.S.phase==='play'){ S=data.S; busy=false; S.active='P'; ov.hidden=true; render(); }
-  else showMenu();
+  SV=loadSave();
+  if(!SV) showCreate(); else showTown((data&&data.view)||'home');
 }
 window.claude?.hot?.ready ? window.claude.hot.ready(boot) : boot(window.claude?.hot?.data ?? {});
 }
+}
+
 </script>
 
 </body>
