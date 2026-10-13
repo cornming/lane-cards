@@ -67,28 +67,32 @@ button:focus-visible,.card:focus-visible{outline:2px solid var(--gold-hi);outlin
 
 /* field */
 #field{display:flex;flex-direction:row;align-items:center;justify-content:center;gap:10px}
-#field.v{flex-direction:column;gap:6px}
+#field.compact{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-areas:"hp he" "bd bd";gap:6px}
+#field.compact #heroP{grid-area:hp}
+#field.compact #heroE{grid-area:he}
+#field.compact #boardWrap{grid-area:bd}
 #heroP{order:-1}
 #heroE{order:1}
 #field.v #heroE{order:-1}
 #field.v #heroP{order:1}
 .hero{width:130px;flex:none;padding:12px 8px;display:flex;flex-direction:column;align-items:center;gap:6px;position:relative}
-#field.v .hero{width:100%;max-width:540px;flex-direction:row;padding:6px 12px;gap:10px}
+#field.compact .hero{width:auto;flex-direction:row;flex-wrap:wrap;padding:6px 10px;gap:4px 8px}
 .face{width:66px;height:66px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:34px;line-height:1;
   background:radial-gradient(circle at 40% 35%, #3a5a5c, #0b1b1d);border:3px solid var(--gold);
   box-shadow:0 0 0 2px #050d0e, 0 0 14px 2px var(--c), 0 3px 8px rgba(0,0,0,.6)}
 .hero.ally{--c:rgba(63,163,255,.55)}
 .hero.foe{--c:rgba(255,75,58,.55)}
-#field.v .face{width:42px;height:42px;font-size:21px;border-width:2px}
+#field.compact .face{width:36px;height:36px;font-size:18px;border-width:2px}
 .hero .who{font-size:12px;color:var(--muted);text-align:center;line-height:1.3}
 .hero .who b{display:block;color:var(--fg);font-family:var(--font-display);font-size:15px;letter-spacing:.06em}
-#field.v .hero .who{text-align:left}
+#field.compact .hero .who{text-align:left}
+#field.compact .hero .sub{width:100%;text-align:left;font-size:11px}
 .hpwrap{width:100%;display:flex;flex-direction:column;align-items:center;gap:3px}
-#field.v .hpwrap{flex:1;flex-direction:row;align-items:center;gap:8px;min-width:0}
+#field.compact .hpwrap{flex:1;flex-direction:row;align-items:center;gap:6px;min-width:90px}
 .hpbar{width:100%;height:9px;border-radius:2px;background:#050d0e;border:1px solid var(--gold-lo);overflow:hidden}
 .hpbar i{display:block;height:100%;background:linear-gradient(180deg,#ff7a66,#a11f12);transition:width .3s}
 .hpnum{white-space:nowrap;font-family:var(--font-num);font-weight:700;font-size:24px;color:var(--hp);text-shadow:0 1px 2px #000;font-variant-numeric:tabular-nums}
-#field.v .hpnum{font-size:19px}
+#field.compact .hpnum{font-size:17px}
 .hpnum small{font-size:12px;color:var(--muted);font-weight:600;text-shadow:none}
 .hero .sub{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums;text-align:center}
 .hero.hit{animation:shake .35s}
@@ -152,7 +156,7 @@ button:focus-visible,.card:focus-visible{outline:2px solid var(--gold-hi);outlin
 @keyframes floatup{0%{opacity:0;margin-top:6px}15%{opacity:1}100%{opacity:0;margin-top:-30px}}
 
 /* command bar */
-.hud{display:grid;grid-template-columns:230px minmax(0,1fr) 270px;gap:10px;padding:10px;align-items:stretch}
+.hud{display:grid;grid-template-columns:180px minmax(0,1fr) 230px;gap:10px;padding:10px;align-items:stretch}
 .log{list-style:none;margin:0;padding:8px 10px;font-size:12px;color:var(--muted);max-height:178px;overflow:auto;
   background:rgba(0,0,0,.35);border:1px solid #0a1718;border-radius:3px}
 .log li{padding:1px 0}
@@ -161,7 +165,7 @@ button:focus-visible,.card:focus-visible{outline:2px solid var(--gold-hi);outlin
 .log li:first-child{color:var(--fg)}
 .rack{min-width:0;display:flex;flex-direction:column;gap:8px}
 .rackrow{display:flex;gap:10px;align-items:flex-start;min-width:0}
-.pile{flex:none;width:78px;height:112px;border-radius:5px;position:relative;margin-top:10px;
+.pile{flex:none;width:70px;height:104px;border-radius:5px;position:relative;margin-top:10px;
   background:repeating-linear-gradient(45deg,#1d3d40 0 6px,#163133 6px 12px);border:2px solid var(--gold-lo);
   box-shadow:3px 3px 0 #0a1718, 5px 5px 0 #2a4b4e, 0 4px 8px rgba(0,0,0,.6);display:flex;align-items:flex-end;justify-content:center}
 .pile::before{content:"✦";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:30px;color:var(--gold-lo)}
@@ -175,13 +179,13 @@ button:focus-visible,.card:focus-visible{outline:2px solid var(--gold-hi);outlin
 .end:disabled{background:linear-gradient(180deg,var(--teal3),var(--teal2));color:var(--muted);border-color:var(--gold-lo);cursor:default}
 
 /* cards: teal-framed portrait cards, wait top-left, attack bottom-left, health bottom-right */
-.card{--q:var(--q1);flex:none;width:84px;height:118px;border-radius:5px;position:relative;padding:0;
+.card{--q:var(--q1);flex:none;width:78px;height:110px;border-radius:5px;position:relative;padding:0;
   background:linear-gradient(180deg,#1d3a3d,#0d1f21);border:2px solid var(--q);
   box-shadow:inset 0 0 0 1px #050d0e, 0 3px 8px rgba(0,0,0,.6);display:flex;flex-direction:column;align-items:stretch;transition:transform .15s}
 .card.q2{--q:var(--q2)}.card.q3{--q:var(--q3)}.card.q4{--q:var(--q4)}
-.card .pt{margin:4px 4px 0;height:62px;border-radius:3px;display:flex;align-items:center;justify-content:center;
+.card .pt{margin:4px 4px 0;height:56px;border-radius:3px;display:flex;align-items:center;justify-content:center;
   background:radial-gradient(circle at 50% 40%, var(--tc,#5a6a7a), #0d1f21 85%);box-shadow:inset 0 0 0 1px rgba(0,0,0,.6)}
-.card .ic{font-size:34px;line-height:1;filter:drop-shadow(0 2px 2px rgba(0,0,0,.7))}
+.card .ic{font-size:30px;line-height:1;filter:drop-shadow(0 2px 2px rgba(0,0,0,.7))}
 .card .nm{font-family:var(--font-display);font-size:12px;font-weight:900;line-height:1.2;text-align:center;margin-top:3px;color:var(--fg);padding:0 2px}
 .card .ty{font-size:10px;color:var(--muted);text-align:center;line-height:1.3}
 .card .a,.card .h{position:absolute;bottom:2px;font-family:var(--font-num);font-weight:700;font-size:16px;line-height:1;text-shadow:0 0 2px #000,0 1px 2px #000}
@@ -230,6 +234,15 @@ button:focus-visible,.card:focus-visible{outline:2px solid var(--gold-hi);outlin
 .rules li{margin:4px 0}
 .result{font-size:16px;margin:8px 0 16px}
 .row{display:flex;gap:8px;flex-wrap:wrap}
+
+.rotate{display:none;margin:0;padding:6px 12px;border:1px dashed var(--gold-lo);border-radius:3px;color:var(--gold-hi);font-size:13px;text-align:center}
+@media (orientation:portrait) and (max-width:700px){ .rotate{display:block} }
+
+.card .pt{overflow:hidden}
+.card .pt img.art{width:100%;height:100%;object-fit:cover;display:block}
+.card .pt:has(img.art) .ic{width:100%;height:100%;filter:none}
+.card.wait .pt img.art{filter:grayscale(.7)}
+.unit .ic img.uart{width:calc(var(--t)*.82);height:calc(var(--t)*.82);border-radius:50%;object-fit:cover;border:2px solid var(--rc);display:block}
 
 /* ===== 主城與各功能畫面 ===== */
 .btn.on{border-color:var(--gold-hi);color:var(--gold-hi)}
@@ -347,6 +360,7 @@ button:focus-visible,.card:focus-visible{outline:2px solid var(--gold-hi);outlin
 <div id="app">
 <div id="town" hidden></div>
 <div id="battle">
+  <p class="rotate">把手機橫放，戰場和手牌會更大。</p>
   <header class="bar frame">
     <h1>三路卡陣</h1><span class="ver" id="ver"></span>
     <div class="turn">第 <b id="turnNo">1</b> 回合</div>
@@ -382,8 +396,8 @@ button:focus-visible,.card:focus-visible{outline:2px solid var(--gold-hi);outlin
 
 <script>
 /* ================= 規則資料 ================= */
-const VERSION='0.4.0';
-const LANES=3, COLS=10, HERO_HP=40, HAND_MAX=6, START_HAND=3, SUDDEN=20;
+const VERSION='0.5.0';
+const LANES=3, COLS=10, HERO_HP=40, HAND_MAX=8, START_HAND=3, SUDDEN=20;
 const TYPES={
   melee:{n:'近戰',phys:1,fx:''},
   ranged:{n:'射擊',phys:1,fx:''},
@@ -414,13 +428,15 @@ function K(id,cls,name,icon,wait,target,desc,ex={}){return {id,cls,name,icon,kin
   U('griffin','獅鷲騎士','🦅',4,4,10,3,1,'melee',{fly:1}),
   U('treant','樹人守衛','🌳',3,2,16,1,1,'melee',{counter:3,guard:1}),
   U('cannon','矮人砲手','💣',4,5,8,1,4,'ranged',{snipe:1}),
-  U('medic','戰地醫者','🩹',2,1,8,1,2,'holy',{heal:2}),
+  U('medic','戰地醫者','🩹',2,1,8,1,2,'holy',{heal:2,bless:1}),
   U('horn','號角兵','📯',2,2,7,2,1,'melee',{haste:1}),
   U('salamander','火蜥蜴','🦎',2,2,7,2,1,'fire',{strike:1}),
   U('dragon','龍騎將','🐉',6,6,22,2,2,'fire',{fly:1,elite:1},{armor:1,ward:1}),
-  U('bishop','大主教','☀️',6,3,18,1,3,'holy',{heal:3,elite:1},{ward:2}),
+  U('bishop','大主教','☀️',6,3,18,1,3,'holy',{heal:3,bless:1,elite:1},{ward:2}),
+  U('berserker','狂戰士','🪓',3,3,11,2,1,'melee',{valor:1}),
   K('warcry','warrior','戰吼','📣',3,'none','我方場上所有單位攻擊 +2'),
-  K('cleave','warrior','重斬','🪓',2,'enemy','對一個敵方單位造成 6 點物理傷害',{dmg:6,dtype:'melee'}),
+  K('cleave','warrior','重斬','💥',2,'enemy','對一個敵方單位造成 6 點物理傷害',{dmg:6,dtype:'melee'}),
+  K('valormark','warrior','英勇印記','🎖️',2,'ally','一個我方單位攻擊 +1，並獲得英勇：之後每次攻擊再 +1 攻擊'),
   K('bulwark','warrior','鐵壁','🏰',2,'ally','一個我方單位護甲 +2、生命 +6'),
   K('heartshot','hunter','穿心箭','🎯',3,'none','直接對敵方英雄造成 6 點傷害'),
   K('trap','hunter','捕獸夾','🪤',2,'enemy','對一個敵方單位造成 3 點傷害並暈眩一回合',{dmg:3,dtype:'ranged'}),
@@ -428,25 +444,27 @@ function K(id,cls,name,icon,wait,target,desc,ex={}){return {id,cls,name,icon,kin
   K('fireball','mage','火球術','☄️',3,'area','2×2 範圍內的敵方單位受到 4 點火焰傷害並燃燒',{area:'sq2',dmg:4,dtype:'fire'}),
   K('nova','mage','冰霜新星','🧊',3,'area','三條路同一格位的敵方單位受到 3 點冰結傷害並緩速',{area:'rank',dmg:3,dtype:'ice'}),
   K('missile','mage','奧術飛彈','✨',1,'enemy','對一個敵方單位造成 3 點魔法傷害',{dmg:3,dtype:'magic'}),
-  K('mend','priest','治癒之光','💚',2,'area','3×3 範圍內的我方單位回復 6 生命',{area:'sq3',heal:6}),
+  K('mend','priest','治癒之光','💚',2,'area','3×3 範圍內的我方單位回復 6 生命；被治療的單位再獲得祝福（攻擊 +1、生命上限 +1）',{area:'sq3',heal:6}),
   K('judgement','priest','聖光審判','🔆',2,'enemy','對一個敵方單位造成 5 點神聖傷害，無視防禦',{dmg:5,dtype:'holy'}),
-  K('sanctuary','priest','庇護','🕊️',3,'none','我方英雄回復 8 生命，場上我方單位各回復 3 生命'),
+  K('sanctuary','priest','庇護','🕊️',3,'none','我方英雄回復 8 生命，場上我方單位各回復 3 生命；被治療的單位獲得祝福（攻擊 +1、生命上限 +1）'),
 ].forEach(c=>CARDS[c.id]=c);
-const RACE={sword:'人類',shield:'人類',archer:'精靈',wolf:'獸人',pyro:'人類',frost:'精靈',storm:'地精',paladin:'人類',assassin:'亡靈',wall:'地精',
+const RACE={berserker:'獸人',sword:'人類',shield:'人類',archer:'精靈',wolf:'獸人',pyro:'人類',frost:'精靈',storm:'地精',paladin:'人類',assassin:'亡靈',wall:'地精',
   griffin:'野獸',treant:'精靈',cannon:'地精',medic:'人類',horn:'獸人',salamander:'野獸',dragon:'巨魔',bishop:'人類'};
 const QNAME=['','藍','紫','金','橙'];
+const CARD_IMG={};  // 卡牌 id → 已載入的插圖路徑（cards/<id>.webp）
+function artHTML(id,cls){ const def=CARDS[id]; return CARD_IMG[id]? `<img class="${cls||'art'}" src="${CARD_IMG[id]}" alt="" draggable="false">` : def.icon; }
 const TCOLOR={melee:'#6b6f80',ranged:'#4f7a46',fire:'#a4482a',ice:'#3f7fa6',thunder:'#8a8a2a',holy:'#a08f4a',dark:'#5d3f80',wall:'#6a6258'};
 function quality(def){ if(def.elite) return 4; if(def.wait>=4) return 3; if(def.wait>=3) return 2; return 1; }
 const MASTERY=0.25;
 
 const CLASSES={
-  warrior:{name:'戰士',icon:'🛡️',desc:'強化部隊攻擊，正面推進。',sig:'戰吼・重斬・鐵壁',
-    deck:{sword:3,shield:2,wolf:2,archer:2,horn:2,paladin:1,griffin:1,wall:1,dragon:1,warcry:1,cleave:2,bulwark:2}},
+  warrior:{name:'戰士',icon:'🛡️',desc:'英勇越戰越強，強化部隊正面推進。',sig:'戰吼・重斬・鐵壁・英勇印記',
+    deck:{sword:2,shield:2,wolf:2,archer:2,horn:1,berserker:2,paladin:1,griffin:1,wall:1,dragon:1,warcry:1,cleave:2,bulwark:1,valormark:1}},
   hunter:{name:'遊俠',icon:'🏹',desc:'遠程壓制，直接射擊敵方英雄。',sig:'穿心箭・捕獸夾・偵查',
     deck:{sword:2,archer:3,cannon:2,wolf:2,assassin:2,wall:2,horn:1,griffin:1,heartshot:2,trap:2,scout:1}},
   mage:{name:'法師',icon:'🔮',desc:'範圍法術與控制敵軍。',sig:'火球術・冰霜新星・奧術飛彈',
     deck:{sword:2,pyro:2,frost:2,storm:2,salamander:2,wall:2,treant:1,shield:1,dragon:1,fireball:2,nova:1,missile:2}},
-  priest:{name:'牧師',icon:'📿',desc:'治療與防禦，聖光傷害。',sig:'治癒之光・聖光審判・庇護',
+  priest:{name:'牧師',icon:'📿',desc:'治療附帶祝福，讓部隊越補越強。',sig:'治癒之光・聖光審判・庇護',
     deck:{sword:2,shield:2,medic:2,paladin:2,treant:2,archer:2,horn:1,wall:1,bishop:1,mend:2,judgement:2,sanctuary:1}},
 };
 
@@ -460,6 +478,8 @@ function abilityLines(def){
   if(a.charge) out.push(`衝鋒 ${a.charge}：同回合移動 2 格以上後攻擊 +${a.charge}`);
   if(a.snipe) out.push('狙擊：優先攻擊射程內生命最低的敵人');
   if(a.heal) out.push(`治療 ${a.heal}：每回合回復相鄰友軍 ${a.heal} 生命`);
+  if(a.bless) out.push('祝福：治療到受傷的友軍時，對方攻擊 +1、生命上限 +1');
+  if(a.valor) out.push('英勇：每次攻擊後，攻擊力 +1');
   if(a.haste) out.push(`加速 ${a.haste}：每回合開始，待機最久的手牌再減 ${a.haste}`);
   if(a.strike) out.push(`直擊 ${a.strike}：每回合直接對敵方英雄造成 ${a.strike} 點傷害`);
   const fx=TYPES[def.type]?.fx; if(fx && def.type!=='melee' && def.type!=='ranged') out.push(`${TYPES[def.type].n}：${fx}`);
@@ -569,7 +589,9 @@ function damageHero(side,amt){
   const sd=S.sides[side]; sd.hp=Math.max(0,sd.hp-amt); ui.heroHit(side,amt);
   if(sd.hp<=0) gameOver(foeOf(side));
 }
-function healUnit(u,n){const before=u.hp; u.hp=Math.min(u.maxHp,u.hp+n); const g=u.hp-before; if(g>0) ui.float(u,'+'+g,'heal'); return g;}
+function healUnit(u,n,bless){const before=u.hp; u.hp=Math.min(u.maxHp,u.hp+n); const g=u.hp-before; if(g>0) ui.float(u,'+'+g,'heal');
+  if(g>0&&bless){ if(u.atk>0) u.atk+=1; u.maxHp+=1; u.hp+=1; ui.float(u,'祝福','buff',-16); }
+  return g;}
 function gameOver(winner){
   if(S.phase!=='play') return;
   S.phase='over'; S.winner=winner; log(winner==='P'?'你贏了這場對戰':'你的英雄倒下了',winner);
@@ -595,6 +617,7 @@ async function attack(a,t,moved){
   let amt=a.atk;
   if(ad.ab.charge&&moved>=2){amt+=ad.ab.charge; ui.float(a,'衝鋒','tag',-14);}
   const r=await strike(a,t,amt);
+  if(a.hp>0&&(ad.ab.valor||a.valor)){ a.atk+=1; ui.float(a,'英勇 +1','buff',-16); }
   if(t.unit&&!r.killed&&S.phase==='play'&&a.hp>0){
     const tu=t.unit, td=CARDS[tu.id];
     if(td.ab.counter && dist(tu,a)<=Math.max(1,tu.range) && canTarget(tu,a)){
@@ -616,7 +639,7 @@ async function act(u){
   const def=CARDS[u.id], d=dir(u.side);
   if(u.st.stun>0){u.st.stun--; ui.float(u,'暈眩中','tag'); await sleep(200); await tick(u); return;}
   if(def.ab.heal){
-    let any=0; for(const o of S.units) if(o.side===u.side&&o!==u&&dist(o,u)===1) any+=healUnit(o,def.ab.heal);
+    let any=0; for(const o of S.units) if(o.side===u.side&&o!==u&&dist(o,u)===1) any+=healUnit(o,def.ab.heal,def.ab.bless);
     if(any){ui.render(); await sleep(180);}
   }
   if(def.ab.strike){damageHero(foeOf(u.side),def.ab.strike); await sleep(180); if(S.phase!=='play') return;}
@@ -674,8 +697,9 @@ async function castSkill(side,card,lane,col){
     case 'bulwark': {const t=unitAt(lane,col); t.armor+=2; t.maxHp+=6; t.hp+=6; ui.float(t,'護甲 +2','buff'); break;}
     case 'heartshot': damageHero(foe,6); break;
     case 'scout': draw(side); draw(side); break;
-    case 'sanctuary': {const h=sd; const g=Math.min(8,h.maxHp-h.hp); h.hp+=g; ui.heroHit(side,-g); own.forEach(u=>healUnit(u,3)); break;}
-    case 'mend': for(const [l,c] of areaCells(k,lane,col)){const u=unitAt(l,c); if(u&&u.side===side) healUnit(u,k.heal);} break;
+    case 'sanctuary': {const h=sd; const g=Math.min(8,h.maxHp-h.hp); h.hp+=g; ui.heroHit(side,-g); own.forEach(u=>healUnit(u,3,true)); break;}
+    case 'mend': for(const [l,c] of areaCells(k,lane,col)){const u=unitAt(l,c); if(u&&u.side===side) healUnit(u,k.heal,true);} break;
+    case 'valormark': {const t=unitAt(lane,col); t.atk+=1; t.valor=true; ui.float(t,'英勇','buff'); break;}
     case 'fireball': case 'nova':
       for(const [l,c] of areaCells(k,lane,col)){const u=unitAt(l,c); if(u&&u.side!==side) hitUnit(u,k.dmg,k.dtype);} break;
     default: {
@@ -809,11 +833,11 @@ const xy=(l,c)=>V? {x:l*cw,y:(COLS-1-c)*ch} : {x:c*cw,y:l*ch};
 
 function layout(){
   const field=$('#field'); const W0=field.clientWidth;
-  V = W0<780; field.classList.toggle('v',V);
+  V = false; const compact=W0<900; field.classList.toggle('compact',compact);
   const W=V?LANES:COLS, H=V?COLS:LANES;
   let bw,bh;
   if(V){ bw=Math.min(W0,520); bh=Math.round(Math.min(Math.max(window.innerHeight*0.62,440),720)); }
-  else { bw=Math.min(W0-2*140-28,880); bh=Math.round(bw*H/W); }
+  else { bw=compact? W0 : Math.min(W0-2*140-28,880); bh=Math.round(bw*H/W); }
   board.style.width=bw+'px'; board.style.height=bh+'px';
   cw=bw/W; ch=bh/H; tok=Math.floor(Math.min(cw,ch)*0.84); tokW=Math.floor(Math.min(cw*0.84,tok*1.5));
   cellsEl.innerHTML='';
@@ -848,7 +872,7 @@ function renderUnits(){
     const p=unitPos(u);
     Object.assign(el.style,{left:p.x+'px',top:p.y+'px',width:tokW+'px',height:tok+'px'});
     el.style.setProperty('--t',tok+'px');
-    el.querySelector('.ic').textContent=def.icon;
+    { const ic=el.querySelector('.ic'); const want=CARD_IMG[u.id]?'img':'txt'; if(ic.dataset.k!==want){ ic.innerHTML=artHTML(u.id,'uart'); ic.dataset.k=want; } }
     el.querySelector('.a').textContent=u.atk;
     const h=el.querySelector('.h'); h.textContent=u.hp; h.classList.toggle('low',u.hp<u.maxHp);
     el.querySelector('.st').textContent=(u.st.burn?'🔥':'')+(u.st.poison?'☠️':'')+(u.st.slow?'❄️':'')+(u.st.stun?'💫':'');
@@ -894,7 +918,7 @@ function cardHTML(c,isSel){
   const ty= def.kind==='unit'? `${RACE[def.id]}・${TYPES[def.type].n}` : '';
   const tc= def.kind==='unit'? TCOLOR[def.type] : '#4a3a6a';
   return `<button type="button" class="${cls}" data-uid="${c.uid}" aria-label="${def.name}，待機 ${c.wait}"><span class="w">${ready?'✓':c.wait}</span>
-    <span class="pt" style="--tc:${tc}"><span class="ic">${def.icon}</span></span><span class="nm">${def.name}</span><span class="ty">${ty}</span>${stats}</button>`;
+    <span class="pt" style="--tc:${tc}"><span class="ic">${artHTML(c.id)}</span></span><span class="nm">${def.name}</span><span class="ty">${ty}</span>${stats}</button>`;
 }
 function renderHand(){
   const h=S.sides.P.hand;
@@ -1050,7 +1074,14 @@ function freshSave(cls){
   for(const k of CLS_KEYS) if(k!==cls) for(const c of Object.values(CARDS)) if(c.kind==='skill'&&c.cls===k) add(c.id,2);
   return {v:1,cls,level:1,exp:0,gold:100,gems:0,coll,deck:starterDeck(cls),cleared:{},wins:0,losses:0,created:Date.now()};
 }
-function loadSave(){ try{ const t=localStorage.getItem(SAVE_KEY); if(t){ const d=JSON.parse(t); if(d&&d.v===1) return d; } }catch(e){} return null; }
+function migrate(d){
+  // 新版本加入的卡牌：每個職業的技能至少 2 張、狂戰士 2 張
+  const add=(id,n)=>{ if(!CARDS[id]) return; d.coll[id]=d.coll[id]||{n:0,star:1}; if(d.coll[id].n<n) d.coll[id].n=n; };
+  for(const c of Object.values(CARDS)) if(c.kind==='skill') add(c.id,2);
+  add('berserker',2);
+  return d;
+}
+function loadSave(){ try{ const t=localStorage.getItem(SAVE_KEY); if(t){ const d=JSON.parse(t); if(d&&d.v===1) return migrate(d); } }catch(e){} return null; }
 function persist(){ try{ localStorage.setItem(SAVE_KEY,JSON.stringify(SV)); }catch(e){} }
 const expNeed=lv=>80+lv*40;
 const heroHpFor=lv=>Math.min(60,HERO_HP+2*(lv-1));
@@ -1124,7 +1155,7 @@ function miniCard(id,o={}){
   const tag=o.tag?`<span class="tag">${o.tag}</span>`:'';
   return `<button type="button" class="card mini q${q} ${o.cls||''}" data-id="${id}" ${o.disabled?'disabled':''} aria-label="${def.name}">
     <span class="w">${def.wait}</span>${def.kind==='unit'?starsHTML(st):''}
-    <span class="pt" style="--tc:${tc}"><span class="ic">${o.locked?'🔒':def.icon}</span></span>
+    <span class="pt" style="--tc:${tc}"><span class="ic">${o.locked?'🔒':artHTML(id)}</span></span>
     <span class="nm">${o.locked?'？？？':def.name}</span><span class="ty">${def.kind==='unit'?RACE[id]+'・'+TYPES[def.type].n:''}</span>${o.locked?'':stats}${tag}</button>`;
 }
 function topBar(){
@@ -1368,8 +1399,14 @@ function showCreate(){
 
 window.addEventListener('resize',()=>{clearTimeout(window.__rz); window.__rz=setTimeout(()=>{ if(S&&!battleEl.hidden) layout(); },120);});
 window.claude?.hot?.snapshot?.(()=>({view}));
+function loadArt(){
+  // 有 cards/<id>.webp 就改用插圖；找不到就維持圖示
+  let pending=0; const done=()=>{ if(--pending===0){ if(!battleEl.hidden&&S) render(); else if(!townEl.hidden) renderTown(); } };
+  for(const id of Object.keys(CARDS)){ pending++; const im=new Image(); const src=`cards/${id}.webp`;
+    im.onload=()=>{ CARD_IMG[id]=src; done(); }; im.onerror=done; im.src=src; }
+}
 function boot(data){
-  newGame('warrior','mage'); layout();
+  newGame('warrior','mage'); layout(); loadArt();
   SV=loadSave();
   if(!SV) showCreate(); else showTown((data&&data.view)||'home');
 }

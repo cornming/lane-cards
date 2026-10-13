@@ -7,7 +7,7 @@
 - 單位召喚後自動前進、自動攻擊，玩家只決定「放哪裡、什麼時候放」
 - 戰士、遊俠、法師、牧師四個職業，各有專屬技能牌
 - 近戰、射擊、火焰、冰結、雷擊、神聖、暗黑、牆八種攻擊類型
-- 先制、反擊、飛行、警戒、衝鋒、狙擊、治療、加速、直擊等能力
+- 先制、反擊、飛行、警戒、衝鋒、狙擊、治療、祝福、英勇、加速、直擊等能力
 
 ## 成長系統
 
@@ -38,3 +38,17 @@
 要升次版號或主版號，手動改 `VERSION` 和 `index.html` 的 `VERSION` 常數，並在 `CHANGELOG.md` 加上對應段落。
 
 變更紀錄見 [CHANGELOG.md](CHANGELOG.md)。
+
+## 卡牌插圖（Gemini）
+
+插圖放在 `cards/<卡牌id>.webp`，有圖就顯示插圖，沒有就顯示圖示。
+
+```bash
+pip install google-genai pillow
+export GEMINI_API_KEY=你的金鑰        # Windows PowerShell：$env:GEMINI_API_KEY="你的金鑰"
+python tools/gen_cards.py              # 只產生還沒有的圖
+python tools/gen_cards.py --only wolf --force   # 重畫單張
+```
+
+提示詞在 `tools/card-prompts.json`，全部是原創角色與場景，不要加入既有遊戲或作品的角色、標誌或文字。
+

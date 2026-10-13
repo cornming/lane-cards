@@ -1,0 +1,133 @@
+{
+ "style_note": "所有卡圖皆為原創角色與場景，請勿加入任何既有遊戲或作品的角色、標誌或文字。",
+ "cards": [
+  {
+   "id": "sword",
+   "prompt": "Original artwork for a fantasy trading card game. Painterly semi-realistic digital illustration, medieval high-fantasy setting, dramatic rim lighting, rich saturated colors, subject centered and filling the frame, dark atmospheric background, square 1:1 composition. Do not include any text, letters, numbers, logos, watermark, border or card frame. Subject: a young human squire swordsman in simple steel armor holding a longsword, determined expression"
+  },
+  {
+   "id": "shield",
+   "prompt": "Original artwork for a fantasy trading card game. Painterly semi-realistic digital illustration, medieval high-fantasy setting, dramatic rim lighting, rich saturated colors, subject centered and filling the frame, dark atmospheric background, square 1:1 composition. Do not include any text, letters, numbers, logos, watermark, border or card frame. Subject: a stout human shield guardian behind a large round iron shield, heavy plate armor"
+  },
+  {
+   "id": "archer",
+   "prompt": "Original artwork for a fantasy trading card game. Painterly semi-realistic digital illustration, medieval high-fantasy setting, dramatic rim lighting, rich saturated colors, subject centered and filling the frame, dark atmospheric background, square 1:1 composition. Do not include any text, letters, numbers, logos, watermark, border or card frame. Subject: a slender elf archer with a longbow, green hooded cloak, drawing an arrow in a forest glade"
+  },
+  {
+   "id": "wolf",
+   "prompt": "Original artwork for a fantasy trading card game. Painterly semi-realistic digital illustration, medieval high-fantasy setting, dramatic rim lighting, rich saturated colors, subject centered and filling the frame, dark atmospheric background, square 1:1 composition. Do not include any text, letters, numbers, logos, watermark, border or card frame. Subject: an orc rider charging on a huge grey wolf, crude spear, motion and dust"
+  },
+  {
+   "id": "pyro",
+   "prompt": "Original artwork for a fantasy trading card game. Painterly semi-realistic digital illustration, medieval high-fantasy setting, dramatic rim lighting, rich saturated colors, subject centered and filling the frame, dark atmospheric background, square 1:1 composition. Do not include any text, letters, numbers, logos, watermark, border or card frame. Subject: a human fire mage conjuring a swirling fireball between both hands, red robes"
+  },
+  {
+   "id": "frost",
+   "prompt": "Original artwork for a fantasy trading card game. Painterly semi-realistic digital illustration, medieval high-fantasy setting, dramatic rim lighting, rich saturated colors, subject centered and filling the frame, dark atmospheric background, square 1:1 composition. Do not include any text, letters, numbers, logos, watermark, border or card frame. Subject: an elf frost mage in pale blue robes with ice crystals floating around her staff"
+  },
+  {
+   "id": "storm",
+   "prompt": "Original artwork for a fantasy trading card game. Painterly semi-realistic digital illustration, medieval high-fantasy setting, dramatic rim lighting, rich saturated colors, subject centered and filling the frame, dark atmospheric background, square 1:1 composition. Do not include any text, letters, numbers, logos, watermark, border or card frame. Subject: a goblin storm shaman crackling with lightning, wild hair, bone staff"
+  },
+  {
+   "id": "paladin",
+   "prompt": "Original artwork for a fantasy trading card game. Painterly semi-realistic digital illustration, medieval high-fantasy setting, dramatic rim lighting, rich saturated colors, subject centered and filling the frame, dark atmospheric background, square 1:1 composition. Do not include any text, letters, numbers, logos, watermark, border or card frame. Subject: a human paladin in gleaming gold-trimmed plate armor with a glowing holy hammer"
+  },
+  {
+   "id": "assassin",
+   "prompt": "Original artwork for a fantasy trading card game. Painterly semi-realistic digital illustration, medieval high-fantasy setting, dramatic rim lighting, rich saturated colors, subject centered and filling the frame, dark atmospheric background, square 1:1 composition. Do not include any text, letters, numbers, logos, watermark, border or card frame. Subject: an undead shadow assassin with twin curved daggers, tattered dark cloak, glowing eyes"
+  },
+  {
+   "id": "wall",
+   "prompt": "Original artwork for a fantasy trading card game. Painterly semi-realistic digital illustration, medieval high-fantasy setting, dramatic rim lighting, rich saturated colors, subject centered and filling the frame, dark atmospheric background, square 1:1 composition. Do not include any text, letters, numbers, logos, watermark, border or card frame. Subject: a fortified stone wall segment built by goblin engineers, wooden spikes and iron bands"
+  },
+  {
+   "id": "griffin",
+   "prompt": "Original artwork for a fantasy trading card game. Painterly semi-realistic digital illustration, medieval high-fantasy setting, dramatic rim lighting, rich saturated colors, subject centered and filling the frame, dark atmospheric background, square 1:1 composition. Do not include any text, letters, numbers, logos, watermark, border or card frame. Subject: a knight riding a majestic griffin with spread wings in the sky"
+  },
+  {
+   "id": "treant",
+   "prompt": "Original artwork for a fantasy trading card game. Painterly semi-realistic digital illustration, medieval high-fantasy setting, dramatic rim lighting, rich saturated colors, subject centered and filling the frame, dark atmospheric background, square 1:1 composition. Do not include any text, letters, numbers, logos, watermark, border or card frame. Subject: an ancient treant guardian made of oak bark and moss, glowing amber eyes"
+  },
+  {
+   "id": "cannon",
+   "prompt": "Original artwork for a fantasy trading card game. Painterly semi-realistic digital illustration, medieval high-fantasy setting, dramatic rim lighting, rich saturated colors, subject centered and filling the frame, dark atmospheric background, square 1:1 composition. Do not include any text, letters, numbers, logos, watermark, border or card frame. Subject: a goblin cannoneer beside a small brass cannon, goggles, lit fuse"
+  },
+  {
+   "id": "medic",
+   "prompt": "Original artwork for a fantasy trading card game. Painterly semi-realistic digital illustration, medieval high-fantasy setting, dramatic rim lighting, rich saturated colors, subject centered and filling the frame, dark atmospheric background, square 1:1 composition. Do not include any text, letters, numbers, logos, watermark, border or card frame. Subject: a human field medic with bandages and a glowing healing satchel, gentle expression"
+  },
+  {
+   "id": "horn",
+   "prompt": "Original artwork for a fantasy trading card game. Painterly semi-realistic digital illustration, medieval high-fantasy setting, dramatic rim lighting, rich saturated colors, subject centered and filling the frame, dark atmospheric background, square 1:1 composition. Do not include any text, letters, numbers, logos, watermark, border or card frame. Subject: an orc war-horn bearer blowing a huge curved horn, tribal war paint"
+  },
+  {
+   "id": "salamander",
+   "prompt": "Original artwork for a fantasy trading card game. Painterly semi-realistic digital illustration, medieval high-fantasy setting, dramatic rim lighting, rich saturated colors, subject centered and filling the frame, dark atmospheric background, square 1:1 composition. Do not include any text, letters, numbers, logos, watermark, border or card frame. Subject: a fiery salamander beast with molten scales and ember breath"
+  },
+  {
+   "id": "dragon",
+   "prompt": "Original artwork for a fantasy trading card game. Painterly semi-realistic digital illustration, medieval high-fantasy setting, dramatic rim lighting, rich saturated colors, subject centered and filling the frame, dark atmospheric background, square 1:1 composition. Do not include any text, letters, numbers, logos, watermark, border or card frame. Subject: an armored troll warlord riding a red fire dragon, flames and smoke"
+  },
+  {
+   "id": "bishop",
+   "prompt": "Original artwork for a fantasy trading card game. Painterly semi-realistic digital illustration, medieval high-fantasy setting, dramatic rim lighting, rich saturated colors, subject centered and filling the frame, dark atmospheric background, square 1:1 composition. Do not include any text, letters, numbers, logos, watermark, border or card frame. Subject: a human archbishop in white and gold vestments raising a radiant sun staff"
+  },
+  {
+   "id": "berserker",
+   "prompt": "Original artwork for a fantasy trading card game. Painterly semi-realistic digital illustration, medieval high-fantasy setting, dramatic rim lighting, rich saturated colors, subject centered and filling the frame, dark atmospheric background, square 1:1 composition. Do not include any text, letters, numbers, logos, watermark, border or card frame. Subject: an orc berserker with a huge two-handed axe, scars, furious battle roar"
+  },
+  {
+   "id": "warcry",
+   "prompt": "Original artwork for a fantasy trading card game. Painterly semi-realistic digital illustration, medieval high-fantasy setting, dramatic rim lighting, rich saturated colors, subject centered and filling the frame, dark atmospheric background, square 1:1 composition. Do not include any text, letters, numbers, logos, watermark, border or card frame. Subject: spell art: a warrior roaring a battle cry with golden shockwaves rippling outward"
+  },
+  {
+   "id": "cleave",
+   "prompt": "Original artwork for a fantasy trading card game. Painterly semi-realistic digital illustration, medieval high-fantasy setting, dramatic rim lighting, rich saturated colors, subject centered and filling the frame, dark atmospheric background, square 1:1 composition. Do not include any text, letters, numbers, logos, watermark, border or card frame. Subject: spell art: a massive axe strike splitting the ground with sparks and debris"
+  },
+  {
+   "id": "bulwark",
+   "prompt": "Original artwork for a fantasy trading card game. Painterly semi-realistic digital illustration, medieval high-fantasy setting, dramatic rim lighting, rich saturated colors, subject centered and filling the frame, dark atmospheric background, square 1:1 composition. Do not include any text, letters, numbers, logos, watermark, border or card frame. Subject: spell art: a glowing translucent fortress barrier shielding a soldier"
+  },
+  {
+   "id": "valormark",
+   "prompt": "Original artwork for a fantasy trading card game. Painterly semi-realistic digital illustration, medieval high-fantasy setting, dramatic rim lighting, rich saturated colors, subject centered and filling the frame, dark atmospheric background, square 1:1 composition. Do not include any text, letters, numbers, logos, watermark, border or card frame. Subject: spell art: a golden valor medal glowing on a warrior's chest plate, rising flames of courage"
+  },
+  {
+   "id": "heartshot",
+   "prompt": "Original artwork for a fantasy trading card game. Painterly semi-realistic digital illustration, medieval high-fantasy setting, dramatic rim lighting, rich saturated colors, subject centered and filling the frame, dark atmospheric background, square 1:1 composition. Do not include any text, letters, numbers, logos, watermark, border or card frame. Subject: spell art: a single glowing arrow streaking across the sky toward its target"
+  },
+  {
+   "id": "trap",
+   "prompt": "Original artwork for a fantasy trading card game. Painterly semi-realistic digital illustration, medieval high-fantasy setting, dramatic rim lighting, rich saturated colors, subject centered and filling the frame, dark atmospheric background, square 1:1 composition. Do not include any text, letters, numbers, logos, watermark, border or card frame. Subject: spell art: an iron hunting trap snapping shut in dry leaves"
+  },
+  {
+   "id": "scout",
+   "prompt": "Original artwork for a fantasy trading card game. Painterly semi-realistic digital illustration, medieval high-fantasy setting, dramatic rim lighting, rich saturated colors, subject centered and filling the frame, dark atmospheric background, square 1:1 composition. Do not include any text, letters, numbers, logos, watermark, border or card frame. Subject: spell art: a brass spyglass on a cliff overlooking a misty battlefield"
+  },
+  {
+   "id": "fireball",
+   "prompt": "Original artwork for a fantasy trading card game. Painterly semi-realistic digital illustration, medieval high-fantasy setting, dramatic rim lighting, rich saturated colors, subject centered and filling the frame, dark atmospheric background, square 1:1 composition. Do not include any text, letters, numbers, logos, watermark, border or card frame. Subject: spell art: a huge fireball crashing down on a stone courtyard, explosion"
+  },
+  {
+   "id": "nova",
+   "prompt": "Original artwork for a fantasy trading card game. Painterly semi-realistic digital illustration, medieval high-fantasy setting, dramatic rim lighting, rich saturated colors, subject centered and filling the frame, dark atmospheric background, square 1:1 composition. Do not include any text, letters, numbers, logos, watermark, border or card frame. Subject: spell art: an expanding ring of ice shards freezing the ground"
+  },
+  {
+   "id": "missile",
+   "prompt": "Original artwork for a fantasy trading card game. Painterly semi-realistic digital illustration, medieval high-fantasy setting, dramatic rim lighting, rich saturated colors, subject centered and filling the frame, dark atmospheric background, square 1:1 composition. Do not include any text, letters, numbers, logos, watermark, border or card frame. Subject: spell art: violet arcane missiles spiraling through the air"
+  },
+  {
+   "id": "mend",
+   "prompt": "Original artwork for a fantasy trading card game. Painterly semi-realistic digital illustration, medieval high-fantasy setting, dramatic rim lighting, rich saturated colors, subject centered and filling the frame, dark atmospheric background, square 1:1 composition. Do not include any text, letters, numbers, logos, watermark, border or card frame. Subject: spell art: soft green healing light falling like petals over wounded soldiers"
+  },
+  {
+   "id": "judgement",
+   "prompt": "Original artwork for a fantasy trading card game. Painterly semi-realistic digital illustration, medieval high-fantasy setting, dramatic rim lighting, rich saturated colors, subject centered and filling the frame, dark atmospheric background, square 1:1 composition. Do not include any text, letters, numbers, logos, watermark, border or card frame. Subject: spell art: a pillar of holy golden light striking down from the clouds"
+  },
+  {
+   "id": "sanctuary",
+   "prompt": "Original artwork for a fantasy trading card game. Painterly semi-realistic digital illustration, medieval high-fantasy setting, dramatic rim lighting, rich saturated colors, subject centered and filling the frame, dark atmospheric background, square 1:1 composition. Do not include any text, letters, numbers, logos, watermark, border or card frame. Subject: spell art: a white dove with radiant wings over a glowing protective dome"
+  }
+ ]
+}
