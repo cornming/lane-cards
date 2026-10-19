@@ -269,6 +269,35 @@ button:focus-visible,.card:focus-visible{outline:2px solid var(--gold-hi);outlin
 .bld b{font-family:var(--font-display);font-size:17px;color:var(--gold-hi);letter-spacing:.08em}
 .bld span:last-child{font-size:12px;color:var(--muted)}
 .bld.soon{opacity:.55;cursor:default}
+.bld{position:relative}
+.badge{position:absolute;top:8px;right:10px;min-width:22px;height:22px;padding:0 6px;border-radius:11px;background:var(--hp);color:#fff;
+  font-family:var(--font-num);font-size:13px;line-height:22px;box-shadow:0 0 0 2px #050d0e}
+.tower{display:flex;flex-direction:column;gap:8px;max-width:720px;margin:10px auto 0}
+.floor{border-left:4px solid var(--gold-lo)}
+.floor.now{border-color:var(--gold-hi);box-shadow:0 0 14px rgba(241,215,140,.25)}
+.floor.done{opacity:.7}
+.ships{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-bottom:12px}
+.ship{background:rgba(0,0,0,.35);border:1px solid #0a1718;border-radius:3px;padding:10px;display:flex;flex-direction:column;gap:6px;min-height:118px}
+.ship b{font-family:var(--font-display);color:var(--gold-hi)}
+.ship.lock{opacity:.5}
+.ship.back{border-color:var(--heal)}
+.ship .crew{display:flex;gap:6px}
+.ship .crew>span{width:36px;height:36px;border-radius:50%;overflow:hidden;border:1px solid var(--gold-lo);display:flex;align-items:center;justify-content:center;font-size:20px;background:#0b1b1d}
+.ship .crew img{width:100%;height:100%;object-fit:cover}
+.ship .eta{font-family:var(--font-num);font-size:18px}
+.ship .end,.ship .btn{align-self:flex-start;margin:0}
+.plan{margin:0;padding-left:18px;font-size:13px;display:flex;flex-direction:column;gap:3px}
+.plan b{font-family:var(--font-num);color:var(--gold-hi)}
+.quests{display:flex;flex-direction:column;gap:10px;max-width:640px}
+.quest{background:rgba(0,0,0,.35);border:1px solid #0a1718;border-radius:3px;padding:10px 12px;display:flex;flex-direction:column;gap:6px}
+.quest .qt{display:flex;justify-content:space-between;gap:10px}
+.quest .qt b{font-family:var(--font-display)}
+.quest .qt span{font-family:var(--font-num);color:var(--gold-hi)}
+.quest .xp{width:100%}
+.quest .qr{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.quest .qr .end,.quest .qr .btn{margin:0}
+.quest.done{opacity:.6}
+.quest.bonus{border-color:var(--gold-lo);background:linear-gradient(90deg,rgba(241,215,140,.12),rgba(0,0,0,.35))}
 .medal{width:62px;height:62px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:30px;
   background:radial-gradient(circle at 40% 35%,#3a5a5c,#0b1b1d);border:3px solid var(--gold);box-shadow:0 0 0 2px #050d0e,0 3px 8px rgba(0,0,0,.6)}
 .screen{padding:14px}
@@ -396,7 +425,7 @@ button:focus-visible,.card:focus-visible{outline:2px solid var(--gold-hi);outlin
 
 <script>
 /* ================= 規則資料 ================= */
-const VERSION='0.5.4';
+const VERSION='0.6.0';
 const LANES=3, COLS=10, HERO_HP=40, HAND_MAX=8, START_HAND=3, SUDDEN=20;
 const TYPES={
   melee:{n:'近戰',phys:1,fx:''},
@@ -501,12 +530,13 @@ const isFly=u=>!!CARDS[u.id].ab.fly;
 function starterDeck(cls){const deck=[]; for(const [id,n] of Object.entries(CLASSES[cls].deck)) for(let i=0;i<n;i++) deck.push(id); return deck;}
 function newSide(cls,o={}){
   const hp=o.hp||HERO_HP;
-  return {cls,hp,maxHp:hp,deck:shuffle((o.deck||starterDeck(cls)).slice()),hand:[],discard:[],stars:o.stars||{},starAll:o.starAll||1};
+  return {cls,hp,maxHp:hp,deck:shuffle((o.deck||starterDeck(cls)).slice()),hand:[],discard:[],stars:o.stars||{},starAll:o.starAll||1,buff:o.buff||null};
 }
-// opts.P / opts.E：{deck:[卡牌 id], stars:{id:星級}, starAll:預設星級, hp:英雄生命}
+// opts.P / opts.E：{deck:[卡牌 id], stars:{id:星級}, starAll:預設星級, hp:英雄生命, buff:{atk,hp,armor} 召喚時加成}
 function newGame(pcls,ecls,opts={}){
   S={phase:'play',turn:1,active:'P',winner:null,auto:false,ctx:opts.ctx||null,
-     sides:{P:newSide(pcls,opts.P),E:newSide(ecls,opts.E)},units:[],log:[],seq:1};
+     sides:{P:newSide(pcls,opts.P),E:newSide(ecls,opts.E)},units:[],log:[],seq:1,
+     stats:{summon:{P:0,E:0},cast:{P:0,E:0},kill:{P:0,E:0}}};
   for(const s of ['P','E']) for(let i=0;i<START_HAND;i++) draw(s);
 }
 const starOf=(sd,id)=>Math.min(5,Math.max(1,sd.stars[id]||sd.starAll||1));
@@ -572,7 +602,7 @@ function calcDmg(amt,dtype,t){
 }
 function kill(u){
   S.units=S.units.filter(x=>x!==u);
-  S.sides[u.side].discard.push(u.id);
+  S.sides[u.side].discard.push(u.id); S.stats.kill[foeOf(u.side)]++;
   ui.float(u,'擊破','ko'); log(`${who(u.side)}的${CARDS[u.id].name}被擊破`,foeOf(u.side));
 }
 function hitUnit(t,amt,dtype){
@@ -667,7 +697,9 @@ function summon(side,card,lane,col){
   const def=CARDS[card.id], st=card.star||1;
   const u={uid:S.seq++,id:def.id,side,lane,col,atk:starAtk(def,st),hp:starHp(def,st),maxHp:starHp(def,st),armor:def.armor,ward:def.ward,range:def.range,
     star:st,st:{burn:0,poison:0,slow:0,stun:0}};
-  removeFromHand(side,card); S.units.push(u);
+  const bf=S.sides[side].buff;
+  if(bf){ if(u.atk>0) u.atk+=bf.atk||0; u.hp+=bf.hp||0; u.maxHp+=bf.hp||0; u.armor+=bf.armor||0; }
+  removeFromHand(side,card); S.units.push(u); S.stats.summon[side]++;
   log(`${who(side)}召喚了${def.name}`,side);
   return u;
 }
@@ -687,7 +719,7 @@ function skillTargetOk(side,k,lane,col){
 }
 async function castSkill(side,card,lane,col){
   const k=CARDS[card.id], sd=S.sides[side], foe=foeOf(side);
-  removeFromHand(side,card);
+  removeFromHand(side,card); S.stats.cast[side]++;
   const mastered = Math.random()<MASTERY;
   if(mastered){ card.wait=k.wait; sd.hand.push(card); } else sd.discard.push(card.id);
   log(`${who(side)}施放「${k.name}」${mastered?'，觸發專精回到待機區':''}`,side);
@@ -1072,13 +1104,15 @@ function freshSave(cls){
   const add=(id,n)=>{coll[id]=coll[id]||{n:0,star:1}; coll[id].n+=n;};
   for(const [id,n] of Object.entries(CLASSES[cls].deck)) add(id,n);
   for(const k of CLS_KEYS) if(k!==cls) for(const c of Object.values(CARDS)) if(c.kind==='skill'&&c.cls===k) add(c.id,2);
-  return {v:1,cls,level:1,exp:0,gold:100,gems:0,coll,deck:starterDeck(cls),cleared:{},wins:0,losses:0,created:Date.now()};
+  return {v:1,cls,level:1,exp:0,gold:100,gems:0,coll,deck:starterDeck(cls),cleared:{},wins:0,losses:0,created:Date.now(),
+    tower:{best:0},dock:[],daily:null};
 }
 function migrate(d){
   // 新版本加入的卡牌：每個職業的技能至少 2 張、狂戰士 2 張
   const add=(id,n)=>{ if(!CARDS[id]) return; d.coll[id]=d.coll[id]||{n:0,star:1}; if(d.coll[id].n<n) d.coll[id].n=n; };
   for(const c of Object.values(CARDS)) if(c.kind==='skill') add(c.id,2);
   add('berserker',2);
+  d.tower=d.tower||{best:0}; d.dock=Array.isArray(d.dock)?d.dock:[]; if(d.daily===undefined) d.daily=null;
   return d;
 }
 function loadSave(){ try{ const t=localStorage.getItem(SAVE_KEY); if(t){ const d=JSON.parse(t); if(d&&d.v===1) return migrate(d); } }catch(e){} return null; }
@@ -1118,6 +1152,12 @@ function settle(win,ctx){
       if(out.first){ out.cards.push(rollDrop()); out.gems=st.boss?3:1; if(st.boss) out.cards.push(rollDrop()); }
       else if(Math.random()<0.4) out.cards.push(rollDrop());
     } else out.exp=10;
+  } else if(ctx.kind==='tower'){
+    const f=towerFloor(ctx.n);
+    if(win&&ctx.n>SV.tower.best){
+      out.first=true; SV.tower.best=ctx.n;
+      out.gold=f.gold; out.exp=f.exp; out.gems=f.gems; if(f.card) out.cards.push(rollDrop());
+    } else out.exp=win?12:8;
   } else {
     if(win){ out.gold=25+SV.level*3; out.exp=18; if(Math.random()<0.25) out.cards.push(rollDrop()); }
     else out.exp=6;
@@ -1125,14 +1165,90 @@ function settle(win,ctx){
   SV.gold+=out.gold; SV.gems+=out.gems; out.cards.forEach(gainCard);
   out.levels=gainExp(out.exp);
   if(win) SV.wins++; else SV.losses++;
+  // 每日任務進度
+  if(win) questAdd('win',1);
+  if(win&&ctx.kind==='stage') questAdd('stage',1);
+  if(ctx.kind==='tower') questAdd('tower',1);
+  if(ctx.kind==='spar') questAdd('spar',1);
+  if(S&&S.stats){ questAdd('summon',S.stats.summon.P); questAdd('cast',S.stats.cast.P); questAdd('kill',S.stats.kill.P); }
   persist();
   return out;
 }
+// 直接發放獎勵（遠征、任務），回傳升級資訊
+function grant(r){
+  SV.gold+=r.gold||0; SV.gems+=r.gems||0; (r.cards||[]).forEach(gainCard);
+  r.levels=gainExp(r.exp||0); persist(); return r;
+}
+
+/* ---- 試煉之塔 ---- */
+const TOWER_MODS=[
+  {k:'fort',name:'堡壘',desc:'敵方英雄生命 +12'},
+  {k:'iron',name:'鐵衛',desc:'敵方士兵護甲 +1'},
+  {k:'haste',name:'急行',desc:'敵方起手牌待機值 -1'},
+  {k:'fury',name:'狂怒',desc:'敵方士兵攻擊 +1'},
+  {k:'vet',name:'老兵',desc:'敵方卡牌星級 +1'},
+];
+function towerFloor(n){
+  const guard=n%5===0, star=Math.min(5,1+Math.floor((n-1)/5)), over=Math.max(0,n-25);
+  const buff={atk:Math.floor(over/10),hp:2*Math.floor(over/5),armor:0};
+  const mod=guard? TOWER_MODS[(n/5-1)%TOWER_MODS.length] : null;
+  let hp=Math.min(80,26+2*n), starAll=star;
+  if(mod){ if(mod.k==='fort') hp+=12; if(mod.k==='iron') buff.armor+=1; if(mod.k==='fury') buff.atk+=1; if(mod.k==='vet') starAll=Math.min(5,star+1); }
+  return {n,guard,mod,hp,starAll,buff,haste:mod?.k==='haste',ecls:CLS_KEYS[(n*3)%4],
+    gold:30+8*n, exp:20+3*n, gems:guard?2:0, card:guard};
+}
+
+/* ---- 遠征碼頭 ---- */
+const DESTS=[
+  {id:'coast',icon:'🌊',name:'近海巡邏',min:30,gold:80,exp:40,req:220,card:.15,gems:0,lv:1,desc:'沿岸清剿海盜小船，來回很快。'},
+  {id:'isle',icon:'🏝️',name:'迷霧群島',min:120,gold:240,exp:120,req:500,card:.5,gems:1,lv:1,desc:'在濃霧裡探索小島，常帶回新卡。'},
+  {id:'ruins',icon:'🏛️',name:'沉沒遺跡',min:480,gold:700,exp:320,req:900,card:1,gems:3,lv:6,desc:'潛入海底古城，一趟要八小時。'},
+];
+const CREW_MAX=3;
+const dockSlots=()=>1+(SV.level>=5?1:0)+(SV.level>=10?1:0);
+const destOf=id=>DESTS.find(d=>d.id===id);
+const cardPower=id=>{const c=CARDS[id],st=starOfOwned(id); return starAtk(c,st)*12+starHp(c,st)*5+(c.elite?40:0);};
+const crewMult=(crew,d)=>Math.max(.6,Math.min(1.5,crew.reduce((a,id)=>a+cardPower(id),0)/d.req));
+const onExpedition=id=>SV.dock.some(x=>x.crew.includes(id));
+function dockReward(x){
+  const d=destOf(x.dest), m=x.mult;
+  const r={gold:Math.round(d.gold*m),exp:Math.round(d.exp*m),gems:d.gems,cards:[]};
+  if(Math.random()<Math.min(1,d.card*m)) r.cards.push(rollDrop());
+  return r;
+}
+const rushCost=x=>Math.max(1,Math.ceil((x.end-Date.now())/3600000));
+function fmtLeft(ms){ if(ms<=0) return '已返航'; const t=Math.ceil(ms/1000), h=Math.floor(t/3600), m=Math.floor(t%3600/60), sc=t%60;
+  return h? `${h} 小時 ${String(m).padStart(2,'0')} 分` : `${m}:${String(sc).padStart(2,'0')}`; }
+
+/* ---- 每日任務 ---- */
+const QUESTS={
+  win:{t:'贏得 2 場戰鬥',goal:2},
+  stage:{t:'在冒險地圖獲勝 1 次',goal:1},
+  tower:{t:'挑戰試煉之塔 1 次',goal:1},
+  spar:{t:'在練兵場對戰 2 場',goal:2},
+  summon:{t:'召喚 12 個士兵',goal:12},
+  cast:{t:'施放 5 張技能牌',goal:5},
+  kill:{t:'擊破 15 個敵方士兵',goal:15},
+  dock:{t:'派出 1 次遠征',goal:1},
+  alchemy:{t:'鍊成升星 1 次',goal:1},
+};
+const QUEST_REWARD={gold:60,exp:40}, QUEST_BONUS={gems:2,gold:100};
+function todayKey(){ const d=new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
+function ensureDaily(){
+  const t=todayKey(); if(SV.daily&&SV.daily.date===t) return SV.daily;
+  let h=0; for(const ch of t+SV.created) h=(h*31+ch.charCodeAt(0))>>>0;
+  const keys=Object.keys(QUESTS), pick=[];
+  while(pick.length<3){ h=(h*1103515245+12345)>>>0; const k=keys[h%keys.length]; if(!pick.includes(k)) pick.push(k); }
+  SV.daily={date:t,q:pick.map(k=>({k,p:0,c:false})),bonus:false}; persist(); return SV.daily;
+}
+function questAdd(k,n){ if(!n) return; const dl=ensureDaily(); for(const q of dl.q) if(q.k===k) q.p=Math.min(QUESTS[k].goal,q.p+n); }
+const questReady=q=>!q.c&&q.p>=QUESTS[q.k].goal;
+function questBadge(){ const dl=ensureDaily(); return dl.q.filter(questReady).length+(!dl.bonus&&dl.q.every(q=>q.c)?1:0); }
 
 {
 const townEl=$('#town'), battleEl=$('#battle'), ov=$('#overlay');
 $('#ver').textContent='v'+VERSION;
-let view='home', deckFilter='all', codexTab='人類', alchemySel=null, mapCh=0;
+let view='home', deckFilter='all', codexTab='人類', alchemySel=null, mapCh=0, dockDest='coast', dockCrew=[];
 
 const RULES=`<ol class="rules">
   <li>戰場有三條路，每條 10 格。你的英雄在<b>左側／下方</b>，對手在另一端。把對手英雄的生命打到 0 就獲勝。</li>
@@ -1179,16 +1295,22 @@ const BUILDINGS=[
   {go:'codex',icon:'📚',name:'圖鑑書庫',desc:'依種族瀏覽所有卡牌與收集進度。'},
   {go:'alchemy',icon:'⚗️',name:'鍊成工坊',desc:'消耗重複卡牌與金幣，提升卡牌星級。'},
   {go:'hero',icon:'🛡️',name:'英雄大廳',desc:'查看等級與戰績，切換職業。'},
-  {go:'',icon:'🗼',name:'試煉之塔',desc:'逐層挑戰的爬塔模式。',soon:1},
-  {go:'',icon:'⛵',name:'遠征碼頭',desc:'派出部隊遠征，離線也能累積獎勵。',soon:1},
+  {go:'tower',icon:'🗼',name:'試煉之塔',desc:'一層一層往上挑戰，每 5 層有守關詞綴與晶石。'},
+  {go:'dock',icon:'⛵',name:'遠征碼頭',desc:'派士兵出海遠征，關掉遊戲也會繼續計時。'},
+  {go:'quest',icon:'📜',name:'任務告示板',desc:'每天三項任務，全部完成再送晶石。'},
 ];
+function bldBadge(go){
+  if(go==='quest') return questBadge();
+  if(go==='dock') return SV.dock.filter(x=>x.end<=Date.now()).length;
+  return 0;
+}
 function homeView(){
   const next=STAGES.find(st=>!SV.cleared[st.i]);
   return `${topBar()}
   <section class="townmap frame">
-    <div class="sky"><h1 class="title">三路卡陣</h1><p>${next?`下一關：${CHAPTERS[next.ci].name}・${next.name}`:'所有章節都已通關'}</p></div>
-    <div class="blds">${BUILDINGS.map(b=>`<button type="button" class="bld ${b.soon?'soon':''}" ${b.soon?'disabled':`data-go="${b.go}"`}>
-      <span class="medal">${b.icon}</span><b>${b.name}</b><span>${b.soon?'下一階段開放':b.desc}</span></button>`).join('')}</div>
+    <div class="sky"><h1 class="title">三路卡陣</h1><p>${next?`下一關：${CHAPTERS[next.ci].name}・${next.name}`:'所有章節都已通關'}・試煉之塔最高第 ${SV.tower.best} 層</p></div>
+    <div class="blds">${BUILDINGS.map(b=>{const n=bldBadge(b.go); return `<button type="button" class="bld" data-go="${b.go}">
+      ${n?`<span class="badge" aria-label="${n} 項可領取">${n}</span>`:''}<span class="medal">${b.icon}</span><b>${b.name}</b><span>${b.desc}</span></button>`;}).join('')}</div>
   </section>`;
 }
 
@@ -1287,8 +1409,98 @@ function heroView(){
     </div>`);
 }
 
+
+/* ---- 試煉之塔 ---- */
+function towerView(){
+  const cur=SV.tower.best+1, top=Math.max(cur+2,Math.ceil(cur/5)*5), bot=Math.max(1,cur-2), rows=[];
+  for(let n=top;n>=bot;n--){
+    const f=towerFloor(n), ec=CLASSES[f.ecls], done=n<cur, now=n===cur;
+    const bf=[f.buff.atk?`攻擊 +${f.buff.atk}`:'',f.buff.hp?`生命 +${f.buff.hp}`:'',f.buff.armor?`護甲 +${f.buff.armor}`:''].filter(Boolean).join('、');
+    rows.push(`<div class="stage floor ${done?'done':''} ${now?'now':''} ${n>cur?'lock':''}">
+      <div class="sn"><b>第 ${n} 層</b>${f.guard?'<span class="chip q4">守關</span>':''}${f.mod?`<span class="chip q3" title="${f.mod.desc}">${f.mod.name}</span>`:''}${done?'<span class="chip q1">已突破</span>':''}</div>
+      <div class="sd">敵方：${ec.icon} ${ec.name}・英雄生命 ${f.hp}・卡牌 ${starsHTML(f.starAll)}${bf?`・士兵${bf}`:''}</div>
+      ${f.mod?`<div class="sd">詞綴「${f.mod.name}」：${f.mod.desc}</div>`:''}
+      <div class="sd">首次突破：🪙 ${f.gold}・經驗 ${f.exp}${f.gems?`・💎 ${f.gems}・必掉卡牌`:''}</div>
+      ${now?`<button type="button" class="end" data-tower="${n}">挑戰第 ${n} 層</button>`:''}</div>`);
+  }
+  return panel('試煉之塔',`<p class="muted">從第 1 層開始，一次只能挑戰下一層，輸了可以馬上再試。每 5 層是守關層，會加上一個詞綴，突破送晶石與卡牌；第 25 層以後敵方士兵還會逐漸變強。</p>
+    <div class="tower">${rows.join('')}</div>`, `<span class="rate">最高紀錄 <b>第 ${SV.tower.best} 層</b></span>`);
+}
+function startTower(n){
+  if(!deckReady()) return needDeck();
+  const f=towerFloor(n);
+  launch(f.ecls,{starAll:f.starAll,hp:f.hp,buff:f.buff,haste:f.haste},{kind:'tower',n},`試煉之塔・第 ${n} 層${f.mod?`（${f.mod.name}）`:''}`);
+}
+
+/* ---- 遠征碼頭 ---- */
+function dockView(){
+  const slots=dockSlots(), now=Date.now();
+  const ships=[0,1,2].map(i=>{
+    const x=SV.dock[i];
+    if(i>=slots) return `<div class="ship lock"><b>船位 ${i+1}</b><span class="muted">指揮官 Lv.${i===1?5:10} 開放</span></div>`;
+    if(!x) return `<div class="ship empty"><b>船位 ${i+1}</b><span class="muted">空著，從右邊安排出航。</span></div>`;
+    const d=destOf(x.dest), left=x.end-now, back=left<=0;
+    return `<div class="ship ${back?'back':''}"><b>${d.icon} ${d.name}</b>
+      <span class="crew">${x.crew.map(id=>`<span title="${CARDS[id].name}">${artHTML(id)}</span>`).join('')}</span>
+      <span class="eta" data-end="${x.end}">${fmtLeft(left)}</span>
+      ${back?`<button type="button" class="end" data-claim="${i}">領取獎勵</button>`
+        :`<button type="button" class="btn" data-rush="${i}" ${SV.gems>=rushCost(x)?'':'disabled'}>💎 ${rushCost(x)} 立即返航</button>`}</div>`;
+  }).join('');
+  const d=destOf(dockDest);
+  dockCrew=dockCrew.filter(id=>ownedN(id)>0&&!onExpedition(id));
+  const power=dockCrew.reduce((a,id)=>a+cardPower(id),0), m=crewMult(dockCrew,d);
+  const free=SV.dock.length<slots, lvOk=SV.level>=d.lv, can=free&&lvOk&&dockCrew.length>0;
+  const dests=DESTS.map(x=>`<button type="button" class="btn ${x.id===dockDest?'on':''}" data-dest="${x.id}">${x.icon} ${x.name}</button>`).join('');
+  const ids=Object.keys(SV.coll).filter(id=>CARDS[id]&&CARDS[id].kind==='unit'&&ownedN(id)>0).sort((a,b)=>cardPower(b)-cardPower(a));
+  const grid=ids.map(id=>{const busy=onExpedition(id); return miniCard(id,{star:starOfOwned(id),tag:busy?'遠征中':`戰力 ${cardPower(id)}`,cls:dockCrew.includes(id)?'picked':'',disabled:busy});}).join('');
+  return panel('遠征碼頭',`
+    <div class="ships">${ships}</div>
+    <div class="deckwrap">
+      <aside class="decklist">
+        <div class="row tabs">${dests}</div>
+        <h3>${d.icon} ${d.name}</h3><p class="muted">${d.desc}</p>
+        <ul class="plan"><li>航程 <b>${d.min>=60?d.min/60+' 小時':d.min+' 分鐘'}</b></li><li>建議戰力 <b>${d.req}</b>，目前 <b>${power}</b>（獎勵 ×${m.toFixed(2)}）</li>
+          <li>預估：🪙 ${Math.round(d.gold*m)}・經驗 ${Math.round(d.exp*m)}${d.gems?`・💎 ${d.gems}`:''}・掉卡機率 ${Math.round(Math.min(1,d.card*m)*100)}%</li></ul>
+        <button type="button" class="end" id="sail" ${can?'':'disabled'}>${!lvOk?`指揮官 Lv.${d.lv} 開放`:!free?'沒有空船位':!dockCrew.length?'先選船員':'出航'}</button>
+        <p class="muted">點右邊的士兵加入船員，最多 ${CREW_MAX} 名。戰力越高獎勵越多（×0.6～×1.5）。出航的卡仍然可以放在牌組裡出戰，只是不能同時參加兩趟遠征。</p>
+      </aside>
+      <div class="pool"><div class="cgrid">${grid}</div></div>
+    </div>`, `<span class="rate">船位 <b>${SV.dock.length}/${slots}</b></span>`);
+}
+
+/* ---- 任務告示板 ---- */
+function questView(){
+  const dl=ensureDaily(), all=dl.q.every(q=>q.c);
+  const rows=dl.q.map((q,i)=>{const Q=QUESTS[q.k], pct=Math.round(q.p/Q.goal*100);
+    return `<div class="quest ${q.c?'done':''}"><div class="qt"><b>${Q.t}</b><span>${q.p}/${Q.goal}</span></div>
+      <div class="xp"><i style="width:${pct}%"></i></div>
+      <div class="qr"><span class="muted">🪙 ${QUEST_REWARD.gold}・經驗 ${QUEST_REWARD.exp}</span>
+      ${q.c?'<span class="chip q1">已領取</span>':`<button type="button" class="${questReady(q)?'end':'btn'}" data-quest="${i}" ${questReady(q)?'':'disabled'}>${questReady(q)?'領取':'進行中'}</button>`}</div></div>`;}).join('');
+  return panel('任務告示板',`<p class="muted">每天（依這台裝置的日期）換一組三項任務。三項都領取後，可再領全勤獎勵。</p>
+    <div class="quests">${rows}
+      <div class="quest bonus ${dl.bonus?'done':''}"><div class="qt"><b>全勤獎勵：完成今天全部任務</b><span>${dl.q.filter(q=>q.c).length}/3</span></div>
+      <div class="qr"><span class="muted">💎 ${QUEST_BONUS.gems}・🪙 ${QUEST_BONUS.gold}</span>
+      ${dl.bonus?'<span class="chip q1">已領取</span>':`<button type="button" class="${all?'end':'btn'}" id="qBonus" ${all?'':'disabled'}>${all?'領取':'尚未完成'}</button>`}</div></div>
+    </div>`, `<span class="rate">${dl.date}</span>`);
+}
+function rewardPop(title,r){
+  ov.hidden=false;
+  ov.innerHTML=`<div class="panel frame"><h2 style="font-size:30px">${title}</h2>
+    <div class="rewards">${r.gold?`<span>🪙 +${r.gold}</span>`:''}${r.exp?`<span>經驗 +${r.exp}</span>`:''}${r.gems?`<span>💎 +${r.gems}</span>`:''}${r.levels&&r.levels.length?`<span class="up">升到 Lv.${r.levels[r.levels.length-1]}！</span>`:''}</div>
+    ${r.cards&&r.cards.length?`<div class="loot">${r.cards.map(id=>miniCard(id,{star:starOfOwned(id),tag:'新獲得'})).join('')}</div>`:''}
+    <div class="row"><button type="button" class="end" id="rpOk">好</button></div></div>`;
+  $('#rpOk').onclick=()=>{ ov.hidden=true; renderTown(); };
+}
+setInterval(()=>{
+  if(!SV||townEl.hidden) return;
+  let flip=false;
+  townEl.querySelectorAll('[data-end]').forEach(el=>{ const left=+el.dataset.end-Date.now(); el.textContent=fmtLeft(left); if(left<=0&&!el.closest('.back')) flip=true; });
+  if(flip&&ov.hidden) renderTown();
+},1000);
+
 function renderTown(){
-  townEl.innerHTML = view==='map'? mapView() : view==='deck'? deckView() : view==='codex'? codexView() : view==='alchemy'? alchemyView() : view==='hero'? heroView() : homeView();
+  townEl.innerHTML = view==='map'? mapView() : view==='deck'? deckView() : view==='codex'? codexView() : view==='alchemy'? alchemyView() : view==='hero'? heroView()
+    : view==='tower'? towerView() : view==='dock'? dockView() : view==='quest'? questView() : homeView();
 }
 function go(v){ if(v==='spar'){ startSpar(); return; } view=v; renderTown(); window.scrollTo(0,0); }
 function showTown(v){ battleEl.hidden=true; townEl.hidden=false; ov.hidden=true; if(v) view=v; renderTown(); }
@@ -1299,12 +1511,27 @@ townEl.addEventListener('click',e=>{
   if(t.id==='tRules'){ showRules(); return; }
   if(t.dataset.ch!==undefined){ mapCh=+t.dataset.ch; renderTown(); return; }
   if(t.dataset.fight!==undefined){ startStage(+t.dataset.fight); return; }
+  if(t.dataset.tower!==undefined){ startTower(+t.dataset.tower); return; }
+  if(t.dataset.dest){ dockDest=t.dataset.dest; renderTown(); return; }
+  if(t.id==='sail'){ const d=destOf(dockDest);
+    if(SV.dock.length<dockSlots()&&SV.level>=d.lv&&dockCrew.length){ const now=Date.now();
+      SV.dock.push({dest:d.id,crew:dockCrew.slice(),start:now,end:now+d.min*60000,mult:crewMult(dockCrew,d)});
+      dockCrew=[]; questAdd('dock',1); persist(); }
+    renderTown(); return; }
+  if(t.dataset.claim!==undefined){ const i=+t.dataset.claim, x=SV.dock[i];
+    if(x&&x.end<=Date.now()){ SV.dock.splice(i,1); const r=grant(dockReward(x)); rewardPop(`${destOf(x.dest).name}返航`,r); } return; }
+  if(t.dataset.rush!==undefined){ const x=SV.dock[+t.dataset.rush];
+    if(x&&x.end>Date.now()){ const c=rushCost(x); if(SV.gems>=c){ SV.gems-=c; x.end=Date.now(); persist(); } } renderTown(); return; }
+  if(t.dataset.quest!==undefined){ const q=ensureDaily().q[+t.dataset.quest];
+    if(q&&questReady(q)){ q.c=true; rewardPop('任務完成',grant({...QUEST_REWARD})); } return; }
+  if(t.id==='qBonus'){ const dl=ensureDaily();
+    if(!dl.bonus&&dl.q.every(q=>q.c)){ dl.bonus=true; rewardPop('全勤獎勵',grant({...QUEST_BONUS})); } return; }
   if(t.dataset.df){ deckFilter=t.dataset.df; renderTown(); return; }
   if(t.dataset.rm){ const i=SV.deck.lastIndexOf(t.dataset.rm); if(i>=0) SV.deck.splice(i,1); persist(); renderTown(); return; }
   if(t.id==='dReset'){ SV.deck=starterDeck(SV.cls).filter(id=>ownedN(id)>0); persist(); renderTown(); return; }
   if(t.dataset.ct){ codexTab=t.dataset.ct; renderTown(); return; }
   if(t.id==='doUp'){ const id=alchemySel, st=starOfOwned(id), c=upCost(st);
-    if(st<5&&ownedN(id)-1>=c.copies&&SV.gold>=c.gold){ SV.coll[id].n-=c.copies; SV.coll[id].star=st+1; SV.gold-=c.gold;
+    if(st<5&&ownedN(id)-1>=c.copies&&SV.gold>=c.gold){ SV.coll[id].n-=c.copies; SV.coll[id].star=st+1; SV.gold-=c.gold; questAdd('alchemy',1);
       const cnt=deckCounts(SV.deck); while((cnt[id]||0)>Math.min(COPY_MAX,SV.coll[id].n)){ SV.deck.splice(SV.deck.lastIndexOf(id),1); cnt[id]--; }
       persist(); } renderTown(); return; }
   if(t.dataset.cls&&view==='hero'){ SV.cls=t.dataset.cls; SV.deck=deckLegalFor(SV.cls,SV.deck); persist(); renderTown(); return; }
@@ -1316,16 +1543,20 @@ townEl.addEventListener('click',e=>{
     const id=t.dataset.id;
     if(view==='deck'){ const cnt=deckCounts(SV.deck); if((cnt[id]||0)<Math.min(COPY_MAX,ownedN(id)) && SV.deck.length<DECK_MAX){ SV.deck.push(id); persist(); renderTown(); } return; }
     if(view==='alchemy'){ alchemySel=id; renderTown(); return; }
+    if(view==='dock'){ if(onExpedition(id)) return; const k=dockCrew.indexOf(id);
+      if(k>=0) dockCrew.splice(k,1); else if(dockCrew.length<CREW_MAX) dockCrew.push(id); renderTown(); return; }
   }
 });
 
 /* ---- 開戰與結算 ---- */
+const backView=ctx=>ctx.kind==='stage'?'map':ctx.kind==='tower'?'tower':'home';
 function deckReady(){ const n=SV.deck.length; return n>=DECK_MIN&&n<=DECK_MAX; }
 function needDeck(){ ov.hidden=false; ov.innerHTML=`<div class="panel frame"><h2 style="font-size:28px">牌組張數不符</h2><p class="lead">牌組需要 ${DECK_MIN}～${DECK_MAX} 張，目前 ${SV.deck.length} 張。</p><div class="row"><button type="button" class="end" id="toDeck">前往牌組營帳</button></div></div>`; $('#toDeck').onclick=()=>showTown('deck'); }
 function myStars(){ const m={}; for(const id of Object.keys(SV.coll)) m[id]=SV.coll[id].star||1; return m; }
 function launch(ecls,eopts,ctx,label){
   newGame(SV.cls,ecls,{ctx,P:{deck:SV.deck.slice(),stars:myStars(),hp:heroHpFor(SV.level)},E:eopts});
   S.auto=autoPref;
+  if(eopts&&eopts.haste) for(const c of S.sides.E.hand) c.wait=Math.max(0,c.wait-1);
   for(const el of els.values()) el.remove(); els.clear(); fxEl.innerHTML='';
   sel=null; areaPick=null; inspect=null; busy=false;
   townEl.hidden=true; battleEl.hidden=false; ov.hidden=true; ov.innerHTML='';
@@ -1346,19 +1577,19 @@ function startSpar(){
 ui.over=()=>{
   const win=S.winner==='P', ctx=S.ctx||{kind:'spar'};
   const r=settle(win,ctx);
-  const st=ctx.kind==='stage'?STAGES[ctx.i]:null, nextOpen=st&&STAGES[st.i+1]&&stageOpen(st.i+1);
+  const st=ctx.kind==='stage'?STAGES[ctx.i]:null, nextOpen=(st&&STAGES[st.i+1]&&stageOpen(st.i+1))||(ctx.kind==='tower'&&win);
   const cards=r.cards.length? `<div class="loot">${r.cards.map(id=>miniCard(id,{star:starOfOwned(id),tag:'新獲得'})).join('')}</div>`:'';
   ov.hidden=false;
   ov.innerHTML=`<div class="panel frame"><h2>${win?'勝利':'敗北'}</h2>
-    <p class="result">${win?`第 ${S.turn} 回合擊倒對手英雄。`:`撐到第 ${S.turn} 回合，你的英雄倒下了。`}${r.first?'首次通關！':''}</p>
+    <p class="result">${win?`第 ${S.turn} 回合擊倒對手英雄。`:`撐到第 ${S.turn} 回合，你的英雄倒下了。`}${r.first?(ctx.kind==='tower'?`突破第 ${ctx.n} 層！`:'首次通關！'):''}</p>
     <div class="rewards"><span>🪙 +${r.gold}</span><span>經驗 +${r.exp}</span>${r.gems?`<span>💎 +${r.gems}</span>`:''}${r.levels.length?`<span class="up">升到 Lv.${r.levels[r.levels.length-1]}！英雄生命 ${heroHpFor(SV.level)}</span>`:''}</div>
     ${cards}
-    <div class="row">${win&&nextOpen?`<button type="button" class="end" id="nextBtn">下一關</button>`:''}
+    <div class="row">${win&&nextOpen?`<button type="button" class="end" id="nextBtn">${ctx.kind==='tower'?'挑戰下一層':'下一關'}</button>`:''}
       <button type="button" class="${win&&nextOpen?'btn':'end'}" id="againBtn">再戰一次</button>
       <button type="button" class="btn" id="homeBtn">回主城</button><button type="button" class="btn" id="viewBtn">看戰場</button></div></div>`;
-  if($('#nextBtn')) $('#nextBtn').onclick=()=>startStage(st.i+1);
-  $('#againBtn').onclick=()=>ctx.kind==='stage'?startStage(ctx.i):startSpar();
-  $('#homeBtn').onclick=()=>showTown(ctx.kind==='stage'?'map':'home');
+  if($('#nextBtn')) $('#nextBtn').onclick=()=>ctx.kind==='tower'?startTower(SV.tower.best+1):startStage(st.i+1);
+  $('#againBtn').onclick=()=>ctx.kind==='stage'?startStage(ctx.i):ctx.kind==='tower'?startTower(win?ctx.n:SV.tower.best+1):startSpar();
+  $('#homeBtn').onclick=()=>showTown(backView(ctx));
   $('#viewBtn').onclick=()=>{ov.hidden=true;};
 };
 function showRules(){
@@ -1371,7 +1602,7 @@ $('#newBtn').addEventListener('click',()=>{
   if(!S||S.phase!=='play'){ showTown(); return; }
   ov.hidden=false; ov.innerHTML=`<div class="panel frame"><h2 style="font-size:28px">撤退回城？</h2><p class="lead">這場會算作敗北，只拿到少量經驗。</p>
     <div class="row"><button type="button" class="end" id="rtYes">撤退</button><button type="button" class="btn" id="rtNo">繼續戰鬥</button></div></div>`;
-  $('#rtYes').onclick=()=>{ const ctx=S.ctx||{kind:'spar'}; S.phase='over'; S.winner='E'; S.auto=null; settle(false,ctx); showTown(ctx.kind==='stage'?'map':'home'); };
+  $('#rtYes').onclick=()=>{ const ctx=S.ctx||{kind:'spar'}; S.phase='over'; S.winner='E'; S.auto=null; settle(false,ctx); showTown(backView(ctx)); };
   $('#rtNo').onclick=()=>{ ov.hidden=true; };
 });
 
